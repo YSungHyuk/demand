@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="net.smarthaccp.demand.mapper.DemandMapper" >
+	<select id="getRequestList" resultType="Map">
+		SELECT
+			idx
+			, type
+			, title
+<!-- 			, content -->
+			, company
+			, requester
+			, DATE(request_date) as request_date
+			, state
+			, priority
+			, DATE(create_date) as create_date
+		FROM
+			REQ_DOC_TB
+		WHERE	
+		<choose>
+			<when test="searchType != null and !searchKeyword.equals('')">
+				<choose>
+					<when test="searchType.equals('any')">
+						type like concat('%',#{searchKeyword},'%')
+						OR title like concat('%',#{searchKeyword},'%')
+						OR company like concat('%',#{searchKeyword},'%')
+						OR state like concat('%',#{searchKeyword},'%')
+					</when>
+					<when test="searchType.equals('type')">
+						type like concat('%',#{searchKeyword},'%')
+					</when>
+					<when test="searchType.equals('title')">
+						title like concat('%',#{searchKeyword},'%')
+					</when>
+					<when test="searchType.equals('company')">
+						company like concat('%',#{searchKeyword},'%')
+					</when>
+					<when test="searchType.equals('state')">
+						state like concat('%',#{searchKeyword},'%')
+					</when>
+				</choose>
+			</when>
+			<otherwise>
+				1=1
+			</otherwise>
+		</choose>
+		<choose>
+			<when test="startDate != null and endDate != null">
+				<![CDATA[
+					AND DATE(request_date) >= ${startDate}
+					AND DATE(request_date) <= ${endDate}
+				]]> 
+			</when>
+			<when test="endDate != null">
+				<![CDATA[
+					AND DATE(request_date) <= ${endDate}
+				]]>
+			</when>
+			<when test="startDate != null">
+				<![CDATA[
+					AND DATE(request_date) >= ${startDate}
+				]]>
+			</when>
+		</choose>
+		<if test="startRow != null and listLimit != null">
+			limit
+				${startRow}
+				, ${listLimit}
+		</if>
+	</select>
+</mapper>

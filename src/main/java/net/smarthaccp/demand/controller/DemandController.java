@@ -1,52 +1,58 @@
 package net.smarthaccp.demand.controller;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpSession;
 
-import org.json.JSONArray;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
-import net.smarthaccp.demand.services.DemandServices;
+import net.smarthaccp.demand.services.DemandService;
+import net.smarthaccp.demand.services.FileService;
+import net.smarthaccp.demand.vo.PageInfoVO;
+import net.smarthaccp.demand.vo.RequestVO;
+import net.smarthaccp.demand.vo.SearchInfoVO;
 
 @Controller
-@RequestMapping(value="/api/v1")
+@RequestMapping(value="/requirements")
 public class DemandController {
 	
 	private static final Logger logger = LoggerFactory.getLogger(DemandController.class);
 	
 	@Autowired
-	private DemandServices demandServices;
+	private DemandService demandServices;
 	
+	@Autowired
+	private FileService fileService;
+	
+	@SuppressWarnings("rawtypes")
 	@ResponseBody
-	@RequestMapping(value= "getRequestList", method = RequestMethod.GET, produces = "application/json; charset=UTF-8")
-	public String getRequestList(@RequestParam Map<String,Object> map) {
+	@RequestMapping(value= "getRequestList", method = RequestMethod.POST, produces = "application/json; charset=UTF-8")
+	public ResponseEntity getRequestList(@RequestBody SearchInfoVO request) {
 		
-		int listLimit = Integer.parseInt(String.valueOf(map.get("listLimit")));
-		int pageNum = Integer.parseInt(String.valueOf(map.get("pageNum")));
+		int listLimit = request.getListLimit();
+		int pageNum = request.getPageNum();
 		
+		List<RequestVO> requestList = demandServices.getRequestList(request);
 		
-		List<Map<String,Object>> dataList = demandServices.getRequestList(map);
-		map.remove("startRow");
-		map.remove("listLimit");
+		request.deleteStartRow();
+		request.deleteListLimit();
 		
-		int listCount = demandServices.getRequestList(map).size();
+		int listCount = demandServices.getRequestList(request).size();
 		
 		int pageListLimit = 5;
 		int maxPage = listCount / listLimit + (listCount % listLimit > 0 ? 1 : 0);
@@ -56,55 +62,82 @@ public class DemandController {
 			endPage = maxPage;
 		}
 		
-		Map<String, Object> pageInfo = new HashMap<String, Object>();
-		pageInfo.put("listCount", listCount);
-		pageInfo.put("pageListLimit", pageListLimit);
-		pageInfo.put("maxPage", maxPage);
-		pageInfo.put("startPage", startPage);
-		pageInfo.put("endPage", endPage);
-		pageInfo.put("pageNum", pageNum);
+		PageInfoVO pageInfo = new PageInfoVO();
+		pageInfo.setListCount(listCount);
+		pageInfo.setPageListLimit(pageListLimit);
+		pageInfo.setMaxPage(maxPage);
+		pageInfo.setStartPage(startPage);
+		pageInfo.setEndPage(endPage);
+		pageInfo.setPageNum(pageNum);
 		
-		dataList.add(pageInfo);
+		Map<String, Object> result = new HashMap<String,Object>();
 		
-		JSONArray jsonArray = new JSONArray(dataList);
+		result.put("requestList",requestList);
 		
-	    return jsonArray.toString();
+		logger.info(requestList.toString());
+		
+		result.put("pageInfo",pageInfo);
+		
+		return ResponseEntity.ok(result);
 	}
 	
-	@RequestMapping(value="registRequirement", method = RequestMethod.GET, produces = "application/json; charset=UTF-8")
-	public String registRequirement() {
-		return "requirements/registRequirement";
-	}
-	
-	@RequestMapping(value="registRequirement", method = RequestMethod.POST, produces = "application/json; charset=UTF-8")
+	@RequestMapping(value="request")
 	public String registRequirement(
-			@RequestParam Map<String,Object> map
-			, HttpSession session
-			, MultipartFile[] file) {
+			Model model
+			,@RequestParam Map<String, Object> data) {
 		
-		logger.info(map.toString());
-		for(MultipartFile a : file) {
-			logger.info(a.getName());
-			logger.info(a.getOriginalFilename());
-			logger.info(String.valueOf(a.getSize()));
+		if(data.containsKey("idx")) {
+			RequestVO vo = new RequestVO();
+			vo.setIdx(Integer.parseInt(String.valueOf(data.get("idx"))));
+			RequestVO request = demandServices.selectRequest(vo);
+			request.setFiles(demandServices.getRequestFileList(vo));
+			model.addAttribute("request",request);
+		} else {
+			logger.info("키없음");
 		}
 		
-	    String uploadDir = "/resources/upload/car"; // 서버 이미지 저장 경로
-	    String saveDir = session.getServletContext().getRealPath(uploadDir);
+		model.addAttribute("type",data.get("type"));
+		model.addAttribute("title",data.get("title"));
 		
-	    try {
-	        Date date = new Date();
-	        SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
-	        map.put("file_path",("/" + sdf.format(date)));
-	        saveDir = saveDir + map.get("file_path");
-
-	        Path path = Paths.get(saveDir);
-
-	        Files.createDirectories(path);
-	    } catch (IOException e) {
-	        e.printStackTrace();
-	    }
-	    
-		return "";
+		return "request/request";
 	}
+	
+	@RequestMapping(method = RequestMethod.GET, produces = "application/json; charset=UTF-8")
+	public String requestMain() {
+		return "request/mainRequest";
+	}
+	
+	@RequestMapping(value="registRequest", method = RequestMethod.POST, consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE}, produces = "application/json; charset=UTF-8")
+	public ResponseEntity<Map<String,Object>> registRequirement(
+			@RequestPart(value="request", required=false) RequestVO request
+			, HttpSession session
+			, @RequestPart(value="files", required=false) List<MultipartFile> files) {
+		
+		int insertCount = demandServices.insertRequest(request);
+		
+		Map<String,Object> result = new HashMap<String, Object>();
+		String msg = null;
+		String page = null;
+		
+		if(insertCount > 0) {
+			RequestVO vo = demandServices.selectRequest(request);
+			int idx = vo.getIdx();
+			try {
+				fileService.FileUpload(idx, files, session);
+				msg = "등록완료";
+				page = "/close";
+			} catch (Exception e) {
+				msg = "파일 업로드실패";
+				e.printStackTrace();
+			}
+		} else {
+			msg = "데이터 저장실패";
+		}
+		
+		result.put("msg",msg);
+		result.put("page",page);
+
+		return ResponseEntity.ok(result);
+	}
+	
 }

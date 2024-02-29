@@ -268,7 +268,7 @@
   position: absolute;
   background: #fff;
   text-align: center;
-  z-index: 15;
+  z-index: 5;
 }
 .tui-grid-layer-state p {
   position: absolute;

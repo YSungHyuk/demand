@@ -16,4 +16,9 @@ public class HomeController {
 	public String home() {
 		return "main";
 	}
+	
+	@RequestMapping(value="/close", method = RequestMethod.GET)
+	public String close() {
+		return "close";
+	}
 }

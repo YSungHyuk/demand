@@ -49,9 +49,9 @@ thead tr:nth-child(3) th {
   color: #BDBDBD !important;
 }
 
-tbody tr td {
-  padding: 10px !important;
-}
+/* tbody tr td { */
+/*   padding: 10px !important; */
+/* } */
 
 tfoot tr:nth-child(2) th {
   padding: 10px !important;

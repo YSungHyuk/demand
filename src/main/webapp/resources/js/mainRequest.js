@@ -147,12 +147,11 @@ $(function() {
 		let searchType = $("#search_type").val();
 		let listLimit = $("#listLimit").val();
 		let startRow = (pageNum-1)*listLimit;
-		$.ajax({
-			type:"POST"
-			, url:"/requirements/getRequestList"
-			, contentType:"application/json; charset=UTF-8"
-			, dataType:"json"
-			, data: JSON.stringify({
+		
+		fetch('/api/requirements', {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json; charset=UTF-8' },
+			body: JSON.stringify({
 				startDate:startDate
 				, endDate:endDate
 				, pageNum:pageNum
@@ -161,15 +160,14 @@ $(function() {
 				, searchType:searchType
 				, searchKeyword:keyword
 			})
-			, success: function(result) {
-				pageList(result.pageInfo);
-				grid.resetData(result.requestList);
-				grid.refreshLayout();
-			}
-			, error: function(e) {
-				console.log(e);
-			}
 		})
+		.then(response => response.json())
+		.then(result => {
+			pageList(result.pageInfo);
+			grid.resetData(result.requestList);
+			grid.refreshLayout();
+		})
+		.catch(error => console.error(error));
 	};
 
 	// 조회 버튼
@@ -239,17 +237,11 @@ $(function() {
 	    let _left = Math.ceil((window.screen.width - _width )/2);
 	    let _top = Math.ceil((window.screen.height - _height )/2); 
 	
-		let url = '/requirements/request';
+		let url = '/api/requirements/insertRequest';
 		let target = 'Insert Requirement';
 		let option = 'location=no, directories=no,resizable=yes,status=no,toolbar=no,menubar=no, width='+_width+',height='+_height+',left='+_left+',top='+_top+',scrollbars=yes';
-		window.open('',target,option);
-	
-		let method = 'post';
-		let data = new Object();
-		data.type = 'C';
-		data.title = target;
-		
-		postOpen(method,url,data,target);
+
+		window.open(url,target,option);
 	});
 	
 	getGrid();
@@ -280,13 +272,11 @@ const itemUpdate = idx => {
 	let option = 'location=no, directories=no,resizable=yes,status=no,toolbar=no,menubar=no, width='+_width+',height='+_height+',left='+_left+',top='+_top+',scrollbars=yes';
 	window.open('',target,option);
 
-	let method = 'post';
+	let verb = 'post';
 	let data = new Object();
-	data.type = 'U';
-	data.idx = idx;
 	data.title = target;
 	
-	postOpen(method,url,data,target);
+	postOpen(verb,url,data,target);
 }
 
 // 아이템 삭제
@@ -299,10 +289,10 @@ const itemDelete = idx => {
 }
 
 // post 방식으로 새창열기
-const postOpen = (method, url, data, target) => {
+const postOpen = (verb, url, data, target) => {
     let form = document.createElement("form");
     form.action = location.origin + url;
-    form.method = method;
+    form.verb = verb;
     form.target = target || "_self";
     if (data) {
     	for (let key in data) {

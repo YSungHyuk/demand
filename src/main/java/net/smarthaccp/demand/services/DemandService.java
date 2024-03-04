@@ -20,8 +20,8 @@ public class DemandService {
 		return demandMapper.getRequestList(request);
 	}
 
-	public int insertRequest(RequestVO request) {
-		return demandMapper.insertRequest(request);
+	public int createRequest(RequestVO request) {
+		return demandMapper.createRequest(request);
 	}
 
 	public RequestVO selectRequest(RequestVO request) {
@@ -31,5 +31,9 @@ public class DemandService {
 	public List<requestFileVO> getRequestFileList(RequestVO request) {
 		return demandMapper.getRequestFileList(request);
 	}
+
+//	public int updateRequest(RequestVO request) {
+//		return demandMapper.updateRequest(request);
+//	}
 
 }

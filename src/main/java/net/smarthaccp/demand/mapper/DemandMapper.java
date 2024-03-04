@@ -13,9 +13,11 @@ public interface DemandMapper {
 
 	List<RequestVO> getRequestList(SearchInfoVO request);
 
-	int insertRequest(RequestVO request);
-
 	RequestVO selectRequest(RequestVO request);
 
 	List<requestFileVO> getRequestFileList(RequestVO request);
+
+	int createRequest(RequestVO request);
+
+	int updateRequest(RequestVO request);
 }

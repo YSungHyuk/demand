@@ -14,18 +14,8 @@
 	<header>
 		<jsp:include page="../inc/header.jsp" />
 	</header>
-	<c:choose>
-		<c:when test="${type eq 'C' }">
-			<script src="/resources/js/registRequest.js"></script>
-		</c:when>
-		<c:when test="${type eq 'U' }">
-			<script src="/resources/js/updateRequest.js"></script>
-		</c:when>
-	</c:choose>
+	<script src="/resources/js/registRequest.js"></script>
 	<form id="form" method="POST" enctype="multipart/form-data">
-		<c:if test="${type eq 'U' }">
-			<input type="hidden" name="idx" value="${request.idx }">
-		</c:if>						
 		<div class="container">
 			<div class="row">
 				<div class="col">
@@ -106,50 +96,14 @@
 						</div>
 					</div>
 				</div>
-				<c:if test="${type eq 'U' }">
-					<div class="col">
-						<div id="Carousel" class="carousel slide" data-bs-ride="carousel">
-							<div class="carousel-indicators">
-								<button type="button" data-bs-target="#Carousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
-							</div>
-							<div class="carousel-inner">
-							    	<c:forEach items="${request.files }" var="file" varStatus="status">
-									    <div class="carousel-item <c:if test="${status.index eq 0 }">active</c:if>">
-<%-- 								        	<img src="${pageContext.request.contextPath }/resources${file.file_path }/${file.file_name }" class="d-block w-100" alt="첨부이미지1"> --%>
-								        	<img src="${pageContext.request.contextPath}/resources${file.file_path}/${file.file_name}" class="d-block w-100" alt="첨부이미지1">
-								        	
-									    </div>
-							    	</c:forEach>
-							</div>
-							<button class="carousel-control-prev" type="button"
-								data-bs-target="#Carousel" data-bs-slide="prev">
-								<span class="carousel-control-prev-icon" aria-hidden="true"></span>
-								<span class="visually-hidden">Previous</span>
-							</button>
-							<button class="carousel-control-next" type="button"
-								data-bs-target="#Carousel" data-bs-slide="next">
-								<span class="carousel-control-next-icon" aria-hidden="true"></span>
-								<span class="visually-hidden">Next</span>
-							</button>
-						</div>
-					</div>
-				</c:if>
 			</div>
 			<div class="container">
 				<div class="row text-center">
 					<div class="col">
 						<div class="btn-group" role="group">
-							<c:choose>
-								<c:when test="${type eq 'C'}">
-									<button type="button" id="submitBtn" class="btn btn-outline-secondary">등록</button>
-									<button type="button" id="resetBtn" class="btn btn-outline-secondary">초기화</button>
-									<button type="button" id="closeBtn" class="btn btn-outline-secondary">닫기</button>
-								</c:when>
-								<c:when test="${type eq 'U'}">
-									<button type="button" id="submitBtn" class="btn btn-outline-secondary">수정</button>
-									<button type="button" id="closeBtn" class="btn btn-outline-secondary">닫기</button>
-								</c:when>
-							</c:choose>
+							<button type="button" id="submitBtn" class="btn btn-outline-secondary">등록</button>
+							<button type="button" id="resetBtn" class="btn btn-outline-secondary">초기화</button>
+							<button type="button" id="closeBtn" class="btn btn-outline-secondary">닫기</button>
 						</div>
 					</div>
 				</div>

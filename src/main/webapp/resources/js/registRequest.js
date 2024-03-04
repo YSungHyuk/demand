@@ -13,7 +13,7 @@ $(function() {
 	});
 	
 	$("#submitBtn").on("click",function() {
-		let url = '/requirements/registRequest';
+		let url = '/api/requirements/request';
 		let formData = new FormData();
 		let request = {}
 		
@@ -32,30 +32,29 @@ $(function() {
 		
 		formData.append("request", new Blob([JSON.stringify(request)],{type: "application/json"}));
 		
-		$.ajax({
-			url: url
-			, data : formData
-			, type : 'POST'
-			, success: function(result) {
-				console.log(result.msg);
-				location.href=result.page;
-			},
-			error: function(e) {
-				console.log(e);
-			}
-			, cache: false
-			, contentType: false
-			, processData: false
+		fetch('/api/requirements/request', {
+			method: 'POST',
+			headers: {},
+			body: formData
 		})
+		.then(response => {
+			if(response.status === 200) {
+				location.href='/close';
+			}
+			console.log(response.status);
+		})
+		.then(data => console.log(data))
+		.catch(error => console.error(error));
 		
-//		$("#form").submit();
-	})
+	});
+	
 	$("#resetBtn").on("click",function() {
 		location.reload(true)
-	})
+	});
+	
 	$("#closeBtn").on("click",function() {
 		close();
-	})
+	});
 	
 	fileAdd();
 })

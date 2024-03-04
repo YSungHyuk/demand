@@ -67,7 +67,16 @@
 				, ${listLimit}
 		</if>
 	</select>
-	<insert id="insertRequest" parameterType="RequestVO">
+	<insert id="createRequest" parameterType="RequestVO">
+		<selectKey keyColumn="idx" order="AFTER" resultType="java.lang.String">
+			SELECT
+				IDX
+			FROM 
+				REQ_DOC_TB
+			ORDER BY
+				create_date DESC
+				LIMIT 1
+		</selectKey>
 		INSERT INTO
 			REQ_DOC_TB(type,title,content,company,requester,request_date,priority)
 			values(
@@ -80,6 +89,18 @@
 				, #{priority}
 			)
 	</insert>
+	
+	<update id="updateRequest" parameterType="RequestVO">
+		UPDATE
+			REQ_DOC_TB
+	    <set>
+			<if test="type != null and type !=''">
+				type = ${type},	
+			</if>	    
+	    </set>
+	</update>
+	
+	
 	<select id="selectRequest" resultType="RequestVO" parameterType="RequestVO">
 		SELECT
 			*

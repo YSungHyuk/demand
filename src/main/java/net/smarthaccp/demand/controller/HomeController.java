@@ -21,4 +21,10 @@ public class HomeController {
 	public String close() {
 		return "close";
 	}
+	
+	@RequestMapping(value="/requirements")
+	public String requestMain() {
+		return "request/mainRequest";
+	}
+	
 }

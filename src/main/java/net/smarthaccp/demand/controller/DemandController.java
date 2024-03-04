@@ -28,7 +28,7 @@ import net.smarthaccp.demand.vo.RequestVO;
 import net.smarthaccp.demand.vo.SearchInfoVO;
 
 @Controller
-@RequestMapping(value="/requirements")
+@RequestMapping(value="/api/requirements")
 public class DemandController {
 	
 	private static final Logger logger = LoggerFactory.getLogger(DemandController.class);
@@ -39,9 +39,8 @@ public class DemandController {
 	@Autowired
 	private FileService fileService;
 	
-	@SuppressWarnings("rawtypes")
 	@ResponseBody
-	@RequestMapping(value= "getRequestList", method = RequestMethod.POST, produces = "application/json; charset=UTF-8")
+	@RequestMapping(method = RequestMethod.POST, produces = "application/json; charset=UTF-8")
 	public ResponseEntity getRequestList(@RequestBody SearchInfoVO request) {
 		
 		int listLimit = request.getListLimit();
@@ -81,63 +80,54 @@ public class DemandController {
 		return ResponseEntity.ok(result);
 	}
 	
-	@RequestMapping(value="request")
-	public String registRequirement(
-			Model model
-			,@RequestParam Map<String, Object> data) {
-		
-		if(data.containsKey("idx")) {
-			RequestVO vo = new RequestVO();
-			vo.setIdx(Integer.parseInt(String.valueOf(data.get("idx"))));
-			RequestVO request = demandServices.selectRequest(vo);
-			request.setFiles(demandServices.getRequestFileList(vo));
-			model.addAttribute("request",request);
-		} else {
-			logger.info("키없음");
-		}
-		
-		model.addAttribute("type",data.get("type"));
-		model.addAttribute("title",data.get("title"));
-		
-		return "request/request";
+	@RequestMapping(value="insertRequest")
+	public String createRequest() {
+		return "request/insertRequest";
 	}
 	
-	@RequestMapping(method = RequestMethod.GET, produces = "application/json; charset=UTF-8")
-	public String requestMain() {
-		return "request/mainRequest";
-	}
-	
-	@RequestMapping(value="registRequest", method = RequestMethod.POST, consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE}, produces = "application/json; charset=UTF-8")
-	public ResponseEntity<Map<String,Object>> registRequirement(
+	@ResponseBody
+	@RequestMapping(value="request", method = RequestMethod.POST, consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE}, produces = "application/json; charset=UTF-8")
+	public ResponseEntity<Void> createRequest(
 			@RequestPart(value="request", required=false) RequestVO request
 			, HttpSession session
 			, @RequestPart(value="files", required=false) List<MultipartFile> files) {
 		
-		int insertCount = demandServices.insertRequest(request);
+		request.setIdx(demandServices.createRequest(request));
+		logger.info("!@#$ : "+request.toString());
 		
-		Map<String,Object> result = new HashMap<String, Object>();
-		String msg = null;
-		String page = null;
-		
-		if(insertCount > 0) {
-			RequestVO vo = demandServices.selectRequest(request);
-			int idx = vo.getIdx();
-			try {
-				fileService.FileUpload(idx, files, session);
-				msg = "등록완료";
-				page = "/close";
-			} catch (Exception e) {
-				msg = "파일 업로드실패";
-				e.printStackTrace();
-			}
-		} else {
-			msg = "데이터 저장실패";
+		try {
+			fileService.FileUpload(request.getIdx(), files, session);
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 		
-		result.put("msg",msg);
-		result.put("page",page);
-
-		return ResponseEntity.ok(result);
+		return ResponseEntity.ok().build();
 	}
+	
+	@RequestMapping(value="updateRequest")
+	public String updateRequest() {
+		return "request/updateRequest";
+	}
+	
+	@ResponseBody
+	@RequestMapping(value="request", method = RequestMethod.PUT, consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE}, produces = "application/json; charset=UTF-8")
+	public ResponseEntity<Void> updateRequest(
+			@RequestPart(value="request", required=false) RequestVO request
+			, HttpSession session
+			, @RequestPart(value="files", required=false) List<MultipartFile> files) {
+		
+		request.setIdx(demandServices.updateRequest(request));
+		
+		
+		
+		try {
+			fileService.FileUpload(request.getIdx(), files, session);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return ResponseEntity.ok().build();
+	}
+
 	
 }

@@ -110,3 +110,12 @@
   font-size: 0.725rem;
   margin-left: auto;
 }
+
+.fileDelete svg {
+	 cursor: pointer;
+}
+
+.fileDelete svg:hover {
+	 color: #f00;
+	 transition: all .2s ease-in;
+}

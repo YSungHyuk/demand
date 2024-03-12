@@ -11,6 +11,7 @@
 	<link rel="stylesheet" href="/resources/css/dist/toastr.css">
 	<link rel="stylesheet" href="/resources/css/dist/bootstrap.css">
 	<link rel="stylesheet" href="/resources/css/dist/bootstrap-datepicker.min.css">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 	
 	<script src="/resources/js/dist/jquery-3.7.0.js"></script>
 	<script src="/resources/js/dist/tui-pagination.js"></script>

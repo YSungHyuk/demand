@@ -101,5 +101,4 @@
 		WHERE
 			req_idx = #{req_idx}
 	</select>
-
 </mapper>

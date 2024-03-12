@@ -2,23 +2,18 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <html>
 <head>
-	<title>${title }</title>
-	<style type="text/css">
-		#form {
-			min-width: 300px;
-			min-height: 700px;
-		}
-	</style>
+	<title>요구사항 등록</title>
+	<link rel="stylesheet" href="/resources/css/insertRequest.css">
 </head>
 <body>
 	<header>
 		<jsp:include page="../inc/header.jsp" />
 	</header>
-	<script src="/resources/js/registRequest.js"></script>
+	<script src="/resources/js/insertRequest.js"></script>
 	<form id="form" method="POST" enctype="multipart/form-data">
 		<div class="container">
 			<div class="row">
-				<div class="col">
+				<div class="col-12 col-lg-6">
 					<div class="row mb-3 mt-3 align-items-center">
 						<div class="col-6">
 							<div class="container">
@@ -89,11 +84,15 @@
 							<textarea class="form-control" name="content" id="content" rows="5" required></textarea>
 						</div>
 					</div>
-					<div class="row">
-						<div class="col">
-							<div class="container" id="file-group">
-							</div>
+				</div>
+				<div class="col-12 col-lg-6">
+					<div class="upload-box mt-5">
+						<div id="drop-file" class="drag-file">
+							<img src="https://img.icons8.com/pastel-glyph/2x/image-file.png" alt="파일 아이콘" class="image">
+							<p class="message">Drag files to upload</p>
 						</div>
+					</div>
+					<div id="files" class="files mb-3">
 					</div>
 				</div>
 			</div>

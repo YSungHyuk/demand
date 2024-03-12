@@ -45,7 +45,7 @@ $(function() {
 			{
 				header: '번호'
 				, width: 70
-				, name: 'idx'
+				, name: 'req_idx'
 				, align: 'center'
 			    , sortingType: 'desc'
 			},
@@ -98,7 +98,7 @@ $(function() {
 				, align: 'center'
 				, width: 55
 				, formatter: function(item) {
-					let addBtn = "<button type='button' class='btn btn-sm btn-outline-secondary update' data-idx='"+item.idx+"' onclick='alert()' data-type='update'>수정</button>";
+					let addBtn = "<button type='button' class='btn btn-sm btn-outline-secondary update' data-type='update'>수정</button>";
 					return addBtn;
 				}
 			},
@@ -107,7 +107,7 @@ $(function() {
 				, align: 'center'
 				, width: 55
 				, formatter: function(item) {
-					let addBtn = "<button type='button' class='btn btn-sm btn-outline-secondary delete' data-idx='"+item.idx+"' data-type='delete'>삭제</button>";
+					let addBtn = "<button type='button' class='btn btn-sm btn-outline-secondary delete' data-type='delete'>삭제</button>";
 					return addBtn;
 				}
 			},
@@ -130,12 +130,12 @@ $(function() {
 		if(e.columnName === 'update') {
 			// raw data 와 rowKey 비교 구문
 			for(let row of e.instance.store.viewport.rows) {
-				if(row.rowKey === rowKey) itemUpdate(row.valueMap.idx.value);
+				if(row.rowKey === rowKey) itemUpdate(row.valueMap.req_idx.value);
 			}
 		} else if(e.columnName === 'delete' ) {
 			// raw data 와 rowKey 비교 구문
 			for(let row of e.instance.store.viewport.rows) {
-				if(row.rowKey === rowKey) itemDelete(row.valueMap.idx.value);
+				if(row.rowKey === rowKey) itemDelete(row.valueMap.req_idx.value);
 			}			
 		}
 		
@@ -232,7 +232,7 @@ $(function() {
 	
 	// 아이템 등록
 	$("#inser_item").on("click",function() {
-		let _width = '500';
+		let _width = '1000';
 		let _height = '800';
 	    let _left = Math.ceil((window.screen.width - _width )/2);
 	    let _top = Math.ceil((window.screen.height - _height )/2); 
@@ -262,21 +262,19 @@ const dateFormat = data => {
 
 // 아이템 수정
 const itemUpdate = idx => {
+	
+	console.log(idx);
+	
 	let _width = '1000';
 	let _height = '1000';
     let _left = Math.ceil((window.screen.width - _width )/2);
     let _top = Math.ceil((window.screen.height - _height )/2); 
 
-	let url = '/requirements/request';
+	let url = `/api/requirements/updateRequest/${idx}`;
 	let target = 'Update Requirement';
 	let option = 'location=no, directories=no,resizable=yes,status=no,toolbar=no,menubar=no, width='+_width+',height='+_height+',left='+_left+',top='+_top+',scrollbars=yes';
-	window.open('',target,option);
-
-	let verb = 'post';
-	let data = new Object();
-	data.title = target;
 	
-	postOpen(verb,url,data,target);
+	window.open(url,target,option);
 }
 
 // 아이템 삭제

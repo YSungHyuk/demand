@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 import net.smarthaccp.demand.mapper.DemandMapper;
 import net.smarthaccp.demand.vo.RequestVO;
 import net.smarthaccp.demand.vo.SearchInfoVO;
-import net.smarthaccp.demand.vo.requestFileVO;
 
 @Service
 public class DemandService {
@@ -20,20 +19,16 @@ public class DemandService {
 		return demandMapper.getRequestList(request);
 	}
 
-	public int createRequest(RequestVO request) {
-		return demandMapper.createRequest(request);
+	public int insertRequest(RequestVO request) {
+		return demandMapper.insertRequest(request);
 	}
 
-	public RequestVO selectRequest(RequestVO request) {
-		return demandMapper.selectRequest(request);
+	public RequestVO selectRequest(String req_idx) {
+		return demandMapper.selectRequest(req_idx);
 	}
 
-	public List<requestFileVO> getRequestFileList(RequestVO request) {
-		return demandMapper.getRequestFileList(request);
+	public int updateRequest(RequestVO request) {
+		return demandMapper.updateRequest(request);
 	}
-
-//	public int updateRequest(RequestVO request) {
-//		return demandMapper.updateRequest(request);
-//	}
 
 }

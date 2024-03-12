@@ -9,4 +9,8 @@ public interface KeyMapper {
 
 	KeyVO selectKey(String keyType);
 
+	void insertKey(KeyVO vo);
+
+	void updateKey(KeyVO vo);
+
 }

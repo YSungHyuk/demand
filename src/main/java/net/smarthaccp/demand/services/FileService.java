@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import net.smarthaccp.demand.mapper.FileMapper;
+import net.smarthaccp.demand.vo.FileVO;
 
 @Service
 public class FileService {
@@ -29,14 +30,16 @@ public class FileService {
 	@Autowired
 	private FileMapper fileMapper;
 	
+	@Autowired
+	private KeyService keyService;
+	
 	private static final Logger logger = LoggerFactory.getLogger(FileService.class);
     
     @Value("${uploadDir}")
     private String uploadDir;
     
-    public void FileUpload(
-    		int idx
-    		, List<MultipartFile> files
+    public String FileUpload(
+    		List<MultipartFile> files
     		, HttpSession session) {
     	
     	String saveDir = session.getServletContext().getRealPath(uploadDir);
@@ -55,6 +58,7 @@ public class FileService {
 			e.printStackTrace();
 		}
         
+        String file_idx = keyService.selectKey("FILE");
         int seq = 1;
         
         for(MultipartFile file : files) {
@@ -64,15 +68,14 @@ public class FileService {
         	
         	if(file.getOriginalFilename().length() == 0) continue;
         	
-            Map<String, Object> map = new HashMap<String,Object>();
-            map.put("idx",idx);
-            map.put("file_name",file_name);
-            map.put("seq",seq);
-            map.put("file_path",file_path);
+            FileVO vo = new FileVO();
+            vo.setFile_idx(file_idx);
+            vo.setFile_name(file.getOriginalFilename());
+            vo.setSeq(seq);
+            vo.setFile_path(file_path);
+            vo.setUuid(uuid.substring(0, 8));
             
-            int insertCount = fileMapper.insertFile(map);
-            
-            if(insertCount > 0) {
+            if(fileMapper.insertFile(vo) > 0) {
             	try {
 					file.transferTo(new File(saveDir, file_name));
 				} catch (IllegalStateException e) {
@@ -84,6 +87,12 @@ public class FileService {
             
             seq++;
         }
+        
+        return file_idx;
     }
+    
+	public List<FileVO> getFileList(String file_idx) {
+		return fileMapper.getFileList(file_idx);
+	}
 
 }

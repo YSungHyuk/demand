@@ -12,7 +12,7 @@
 		<nav>
 			<a href="/">메인화면</a>					
 			<a href="/requirements">요구사항</a>					
-			<a href="#">관리사이트</a>					
+			<a href="#">관리사이트</a>
 		</nav>
 	</div>
 </body>

@@ -1,5 +1,8 @@
 package net.smarthaccp.demand.services;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,17 +19,33 @@ public class KeyService {
 	
 	private static final Logger logger = LoggerFactory.getLogger(KeyService.class);
     
-    public String selectKey(String KeyType) {
+//    @SuppressWarnings("null")
+	public String selectKey(String keyType) {
+    	
     	KeyVO vo = null; 
-    	vo = keyMapper.selectKey(KeyType);
+    	vo = keyMapper.selectKey(keyType);
+    	
+    	LocalDate now = LocalDate.now();
+    	
+    	DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yy-MM");
+    	
+    	String keyData = now.format(formatter).replace("-", "");
     	
     	if(vo == null) {
-    		// 키 생성
+    		vo = new KeyVO();
+    		vo.setKey_type(keyType);
+    		vo.setKey_data(keyData);
+    		vo.setSeq("0001");
+    		keyMapper.insertKey(vo); 
+    		return vo.resultKey();
     	} else {
-    		// 키 날짜비교
+    		if(!vo.getKey_data().equals(keyData)) {
+    			vo.setKey_data(keyData);
+    			vo.setSeq("0");
+    		}
+    		keyMapper.updateKey(vo);
+    		vo = keyMapper.selectKey(keyType);
+    		return vo.resultKey();
     	}
-    	
-    	return "";
     }
-
 }

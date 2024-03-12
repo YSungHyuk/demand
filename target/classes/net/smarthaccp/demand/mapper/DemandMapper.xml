@@ -3,7 +3,7 @@
 <mapper namespace="net.smarthaccp.demand.mapper.DemandMapper" >
 	<select id="getRequestList" parameterType="SearchInfoVO" resultType="RequestVO">
 		SELECT
-			idx
+			req_idx
 			, type
 			, title
 <!-- 			, content -->
@@ -67,29 +67,21 @@
 				, ${listLimit}
 		</if>
 	</select>
-	<insert id="createRequest" parameterType="RequestVO">
-		<selectKey keyColumn="idx" order="AFTER" resultType="java.lang.String">
-			SELECT
-				IDX
-			FROM 
-				REQ_DOC_TB
-			ORDER BY
-				create_date DESC
-				LIMIT 1
-		</selectKey>
+	<insert id="insertRequest" parameterType="RequestVO">
 		INSERT INTO
-			REQ_DOC_TB(type,title,content,company,requester,request_date,priority)
+			REQ_DOC_TB(req_idx,type,title,content,company,requester,request_date,priority,file_idx)
 			values(
-				#{type}
+				#{req_idx}
+				, #{type}
 				, #{title}
 				, #{content}
 				, #{company}
 				, #{requester}
 				, #{request_date}
 				, #{priority}
+				, #{file_idx}
 			)
 	</insert>
-	
 	<update id="updateRequest" parameterType="RequestVO">
 		UPDATE
 			REQ_DOC_TB
@@ -98,50 +90,16 @@
 				type = ${type},	
 			</if>	    
 	    </set>
+	    WHERE
+	    	req_idx = ${req_idx}
 	</update>
-	
-	
-	<select id="selectRequest" resultType="RequestVO" parameterType="RequestVO">
+	<select id="selectRequest" resultType="RequestVO" parameterType="String">
 		SELECT
 			*
 		FROM
 			REQ_DOC_TB
 		WHERE
-			1=1
-			<if test="idx != null">
-				AND idx = #{idx}
-			</if>
-			<if test="requester != null">
-				AND requester = #{requester}
-			</if>
-			<if test="content != null">
-				AND content = #{content}
-			</if>
-			<if test="request_date != null">
-				AND request_date = #{request_date}
-			</if>
-			<if test="company != null">
-				AND company = #{company}
-			</if>
-			<if test="type != null">
-				AND type = #{type}
-			</if>
-			<if test="priority != null">
-				AND priority = #{priority}
-			</if>
-			<if test="title != null">
-				AND title = #{title}
-			</if>
+			req_idx = #{req_idx}
 	</select>
-	<select id="getRequestFileList" parameterType="RequestVO" resultType="requestFileVO">
-		SELECT
-			*
-		FROM
-			REQ_FILE_TB
-		WHERE
-			1=1
-			<if test="idx != null">
-				AND idx = #{idx}
-			</if>
-	</select>
+
 </mapper>

@@ -4,7 +4,7 @@
 	<typeAliases>
 		<typeAlias type="net.smarthaccp.demand.vo.RequestVO" alias="RequestVO"/>
 		<typeAlias type="net.smarthaccp.demand.vo.SearchInfoVO" alias="SearchInfoVO"/>
-		<typeAlias type="net.smarthaccp.demand.vo.requestFileVO" alias="requestFileVO"/>
+		<typeAlias type="net.smarthaccp.demand.vo.FileVO" alias="FileVO"/>
 		<typeAlias type="net.smarthaccp.demand.vo.KeyVO" alias="KeyVO"/>
 	</typeAliases>
 </configuration>

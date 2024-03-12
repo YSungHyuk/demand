@@ -6,18 +6,15 @@ import org.apache.ibatis.annotations.Mapper;
 
 import net.smarthaccp.demand.vo.RequestVO;
 import net.smarthaccp.demand.vo.SearchInfoVO;
-import net.smarthaccp.demand.vo.requestFileVO;
 
 @Mapper
 public interface DemandMapper {
 
 	List<RequestVO> getRequestList(SearchInfoVO request);
 
-	RequestVO selectRequest(RequestVO request);
+	RequestVO selectRequest(String req_idx);
 
-	List<requestFileVO> getRequestFileList(RequestVO request);
-
-	int createRequest(RequestVO request);
+	int insertRequest(RequestVO request);
 
 	int updateRequest(RequestVO request);
 }

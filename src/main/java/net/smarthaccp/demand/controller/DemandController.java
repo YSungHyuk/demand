@@ -13,6 +13,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -23,6 +24,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import net.smarthaccp.demand.services.DemandService;
 import net.smarthaccp.demand.services.FileService;
+import net.smarthaccp.demand.services.KeyService;
+import net.smarthaccp.demand.vo.FileVO;
 import net.smarthaccp.demand.vo.PageInfoVO;
 import net.smarthaccp.demand.vo.RequestVO;
 import net.smarthaccp.demand.vo.SearchInfoVO;
@@ -38,6 +41,9 @@ public class DemandController {
 	
 	@Autowired
 	private FileService fileService;
+	
+	@Autowired
+	private KeyService keyService;
 	
 	@ResponseBody
 	@RequestMapping(method = RequestMethod.POST, produces = "application/json; charset=UTF-8")
@@ -92,20 +98,31 @@ public class DemandController {
 			, HttpSession session
 			, @RequestPart(value="files", required=false) List<MultipartFile> files) {
 		
-		request.setIdx(demandServices.createRequest(request));
-		logger.info("!@#$ : "+request.toString());
-		
 		try {
-			fileService.FileUpload(request.getIdx(), files, session);
+			request.setFile_idx(fileService.FileUpload(files, session));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		
+		request.setReq_idx(keyService.selectKey("REQ"));
+		demandServices.insertRequest(request);
+		
 		return ResponseEntity.ok().build();
 	}
 	
-	@RequestMapping(value="updateRequest")
-	public String updateRequest() {
+	@RequestMapping(value="updateRequest/{req_idx}")
+	public String updateRequest(
+				@PathVariable(name="req_idx") String req_idx
+				, Model model) {
+		
+		RequestVO request = demandServices.selectRequest(req_idx);
+		model.addAttribute("request", request);
+
+		if(!request.getFile_idx().isEmpty()) {
+			List<FileVO> files = fileService.getFileList(request.getFile_idx());
+			model.addAttribute("files", files);
+		}
+		
 		return "request/updateRequest";
 	}
 	
@@ -116,12 +133,10 @@ public class DemandController {
 			, HttpSession session
 			, @RequestPart(value="files", required=false) List<MultipartFile> files) {
 		
-		request.setIdx(demandServices.updateRequest(request));
-		
-		
+//		request.setIdx(demandServices.updateRequest(request));
 		
 		try {
-			fileService.FileUpload(request.getIdx(), files, session);
+//			fileService.FileUpload(request.getIdx(), files, session);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

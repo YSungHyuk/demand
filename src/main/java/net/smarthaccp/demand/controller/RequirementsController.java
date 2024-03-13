@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
-import net.smarthaccp.demand.services.DemandService;
+import net.smarthaccp.demand.services.RequirementsService;
 import net.smarthaccp.demand.services.FileService;
 import net.smarthaccp.demand.services.KeyService;
 import net.smarthaccp.demand.vo.FileVO;
@@ -32,12 +32,12 @@ import net.smarthaccp.demand.vo.SearchInfoVO;
 
 @Controller
 @RequestMapping(value="/api/requirements")
-public class DemandController {
+public class RequirementsController {
 	
-	private static final Logger logger = LoggerFactory.getLogger(DemandController.class);
+	private static final Logger logger = LoggerFactory.getLogger(RequirementsController.class);
 	
 	@Autowired
-	private DemandService demandServices;
+	private RequirementsService requestServices;
 	
 	@Autowired
 	private FileService fileService;
@@ -47,17 +47,17 @@ public class DemandController {
 	
 	@ResponseBody
 	@RequestMapping(method = RequestMethod.POST, produces = "application/json; charset=UTF-8")
-	public ResponseEntity getRequestList(@RequestBody SearchInfoVO request) {
+	public ResponseEntity getRequestList(@RequestBody SearchInfoVO searchInfo) {
 		
-		int listLimit = request.getListLimit();
-		int pageNum = request.getPageNum();
+		int listLimit = searchInfo.getListLimit();
+		int pageNum = searchInfo.getPageNum();
 		
-		List<RequestVO> requestList = demandServices.getRequestList(request);
+		List<RequestVO> requestList = requestServices.getRequestList(searchInfo);
 		
-		request.deleteStartRow();
-		request.deleteListLimit();
+		searchInfo.deleteStartRow();
+		searchInfo.deleteListLimit();
 		
-		int listCount = demandServices.getRequestList(request).size();
+		int listCount = requestServices.getRequestList(searchInfo).size();
 		
 		int pageListLimit = 5;
 		int maxPage = listCount / listLimit + (listCount % listLimit > 0 ? 1 : 0);
@@ -105,7 +105,7 @@ public class DemandController {
 		}
 		
 		request.setReq_idx(keyService.selectKey("REQ"));
-		demandServices.insertRequest(request);
+		requestServices.insertRequest(request);
 		
 		return ResponseEntity.ok().build();
 	}
@@ -115,10 +115,10 @@ public class DemandController {
 				@PathVariable(name="req_idx") String req_idx
 				, Model model) {
 		
-		RequestVO request = demandServices.selectRequest(req_idx);
+		RequestVO request = requestServices.selectRequest(req_idx);
 		model.addAttribute("request", request);
 
-		if(!request.getFile_idx().isEmpty()) {
+		if(request.getFile_idx() != null && !request.getFile_idx().isEmpty()) {
 			List<FileVO> files = fileService.getFileList(request.getFile_idx());
 			model.addAttribute("files", files);
 		}

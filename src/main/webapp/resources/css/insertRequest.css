@@ -111,10 +111,6 @@
   margin-left: auto;
 }
 
-.fileDelete svg {
-	 cursor: pointer;
-}
-
 .fileDelete svg:hover {
 	 color: #f00;
 	 transition: all .2s ease-in;

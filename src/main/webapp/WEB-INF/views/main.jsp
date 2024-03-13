@@ -8,12 +8,17 @@
 	<header>
 		<jsp:include page="inc/header.jsp" />
 	</header>
-	<div class="page-wrapper">
-		<nav>
-			<a href="/">메인화면</a>					
-			<a href="/requirements">요구사항</a>					
-			<a href="#">관리사이트</a>
-		</nav>
-	</div>
+	<nav>
+		<jsp:include page="inc/nav.jsp" />
+	</nav>
+	<main>
+		<%-- 요구사항 우선순위 나열 --%>
+		<%-- 유지보수기간 만료사이트 --%>
+	</main>		
+	<footer>
+		<jsp:include page="inc/footer.jsp" />
+	</footer>		
 </body>
 </html>
+
+

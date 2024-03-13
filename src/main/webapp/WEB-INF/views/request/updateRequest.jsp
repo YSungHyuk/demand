@@ -69,7 +69,7 @@
 					<div class="row mb-3">
 						<label class="col-sm-2 col-form-label" for="company">회사</label>
 						<div class="col-sm-10">
-							<input type="text" class="form-control" name="company" id="company" required value="${request.company }">
+							<input type="text" class="form-control" name="company" id="company" required value="${request.site_company_name }">
 						</div>
 					</div>
 					<div class="row mb-3">

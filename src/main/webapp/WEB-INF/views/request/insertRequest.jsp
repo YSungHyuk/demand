@@ -56,32 +56,33 @@
 					</div>
 					<div class="row mb-3">
 						<label class="col-sm-2 col-form-label" for="company">회사</label>
-						<div class="col-sm-10">
-							<input type="text" class="form-control" name="company" id="company" required>
+						<div class="col-sm-10" data-bs-toggle="modal" data-bs-target="#cpSearch">
+							<input type="hidden" name="site_idx" id="site_idx" required>
+							<input type="text" autocomplete="off" class="form-control" name="company" id="company" required readonly>
 						</div>
 					</div>
 					<div class="row mb-3">
 						<label class="col-sm-2 col-form-label" for="requester">요청자</label>
 						<div class="col-sm-10">
-							<input type="text" class="form-control" name="requester" id="requester" required>
+							<input type="text" autocomplete="off" class="form-control" name="requester" id="requester" required>
 						</div>
 					</div>
 					<div class="row mb-3">
 						<label class="col-sm-2 col-form-label" for="request_date">요청일</label>
 						<div class="col-sm-10">
-							<input type="text" class="form-control" name="request_date" id="request_date" required>
+							<input type="text" autocomplete="off" class="form-control" name="request_date" id="request_date" required>
 						</div>
 					</div>
 					<div class="row mb-3">
 						<label class="col-sm-2 col-form-label" for="title">제목</label>
 						<div class="col-sm-10">
-							<input type="text" class="form-control" name="title" id="title" required>
+							<input type="text" autocomplete="off" class="form-control" name="title" id="title" required>
 						</div>
 					</div>
 					<div class="row mb-3">
 						<label class="col-sm-2 col-form-label" for="content">내용</label>
 						<div class="col-sm-10">
-							<textarea class="form-control" name="content" id="content" rows="5" required></textarea>
+							<textarea class="form-control" autocomplete="off" name="content" id="content" rows="5" required></textarea>
 						</div>
 					</div>
 				</div>
@@ -109,5 +110,36 @@
 			</div>
 		</div>
 	</form>
+<div class="modal fade" id="cpSearch" data-bs-keyboard="false" data-bs-backdrop="static" tabindex="-1" aria-labelledby="cpSearch" aria-hidden="true">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="cpSearch">회사명 조회</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body">
+				<div class="container">
+					<div class="row">
+						<div class="col">
+							<div class="input-group mb-3">
+								<input type="text" class="form-control" id="searchBox">
+								<button type="button" id="selectGrid" class="btn btn-outline-secondary">조회</button>
+								<span>
+									<i class="fa fa-search" aria-hidden="true"></i>
+								</span>
+							</div>
+						</div>
+					</div>
+					<div id="companyGrid" class="row">
+					</div>
+				</div>
+			</div>
+<!-- 			<div class="modal-footer"> -->
+<!-- 				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button> -->
+<!-- 			</div> -->
+		</div>
+	</div>
+</div>
 </body>
 </html>
+

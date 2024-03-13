@@ -63,7 +63,7 @@ $(function() {
 			{
 				header: '회사'
 				, width: 200
-				, name: 'company'
+				, name: 'site_company_name'
 				, align: 'center'
 			},
 			{
@@ -171,15 +171,11 @@ $(function() {
 	};
 
 	// 조회 버튼
-	$("#selectGrid").on("click",function(){
-		getGrid();
-	});
+	$("#selectGrid").on("click",getGrid);
 	
 	// 검색 엔터기능
     $("#search_box").on("keydown", function(e){
-        if(e.keyCode === 13) {
-        	getGrid();
-        }
+        if(e.keyCode === 13) getGrid();
     });
 	
 	// 페이지리스트 가공

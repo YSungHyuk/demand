@@ -8,7 +8,7 @@ import net.smarthaccp.demand.vo.RequestVO;
 import net.smarthaccp.demand.vo.SearchInfoVO;
 
 @Mapper
-public interface DemandMapper {
+public interface RequirementsMapper {
 
 	List<RequestVO> getRequestList(SearchInfoVO request);
 

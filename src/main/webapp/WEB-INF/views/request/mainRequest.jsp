@@ -15,7 +15,10 @@
 	<header>
 		<jsp:include page="../inc/header.jsp" />
 	</header>
-	<script src="/resources/js/mainRequest.js"></script>
+	<nav>
+		<jsp:include page="../inc/nav.jsp" />
+	</nav>
+	<script src="${pageContext.request.contextPath }/resources/js/mainRequest.js"></script>
 	<div class="container">
 		<div class="row">
 			<div class="col-sm-12">

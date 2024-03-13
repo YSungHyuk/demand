@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="net.smarthaccp.demand.mapper.SiteManagementsMapper" >
+	<select id="getSiteNameList" parameterType="SearchInfoVO" resultType="Map">
+		SELECT
+			site_idx
+			, site_company_name
+			, state
+		FROM
+			SITE_MGR_TB
+		WHERE	
+		<choose>
+			<when test="!searchKeyword.equals('')">
+				site_company_name like concat('%',#{searchKeyword},'%')
+			</when>
+			<otherwise>
+				1=1
+			</otherwise>
+		</choose>
+	</select>
+</mapper>

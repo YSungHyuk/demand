@@ -1,20 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="net.smarthaccp.demand.mapper.DemandMapper" >
+<mapper namespace="net.smarthaccp.demand.mapper.RequirementsMapper" >
 	<select id="getRequestList" parameterType="SearchInfoVO" resultType="RequestVO">
 		SELECT
 			req_idx
 			, type
 			, title
-<!-- 			, content -->
-			, company
+			, RD.site_idx
+			, SM.site_company_name
 			, requester
 			, DATE(request_date) as request_date
-			, state
+			, RD.state
 			, priority
-			, DATE(create_date) as create_date
+			, DATE(RD.create_date) as create_date
 		FROM
-			REQ_DOC_TB
+			REQ_DOC_TB RD LEFT JOIN SITE_MGR_TB SM
+			ON RD.site_idx = SM.site_idx
 		WHERE	
 		<choose>
 			<when test="searchType != null and !searchKeyword.equals('')">
@@ -22,7 +23,7 @@
 					<when test="searchType.equals('any')">
 						type like concat('%',#{searchKeyword},'%')
 						OR title like concat('%',#{searchKeyword},'%')
-						OR company like concat('%',#{searchKeyword},'%')
+						OR SM.site_company_name like concat('%',#{searchKeyword},'%')
 						OR state like concat('%',#{searchKeyword},'%')
 					</when>
 					<when test="searchType.equals('type')">
@@ -32,7 +33,7 @@
 						title like concat('%',#{searchKeyword},'%')
 					</when>
 					<when test="searchType.equals('company')">
-						company like concat('%',#{searchKeyword},'%')
+						SM.site_company_name like concat('%',#{searchKeyword},'%')
 					</when>
 					<when test="searchType.equals('state')">
 						state like concat('%',#{searchKeyword},'%')
@@ -69,13 +70,13 @@
 	</select>
 	<insert id="insertRequest" parameterType="RequestVO">
 		INSERT INTO
-			REQ_DOC_TB(req_idx,type,title,content,company,requester,request_date,priority,file_idx)
+			REQ_DOC_TB(req_idx,type,title,content,site_idx,requester,request_date,priority,file_idx)
 			values(
 				#{req_idx}
 				, #{type}
 				, #{title}
 				, #{content}
-				, #{company}
+				, #{site_idx}
 				, #{requester}
 				, #{request_date}
 				, #{priority}
@@ -95,9 +96,20 @@
 	</update>
 	<select id="selectRequest" resultType="RequestVO" parameterType="String">
 		SELECT
-			*
+			req_idx
+			, type
+			, title
+			, content
+			, RD.site_idx
+			, SM.site_company_name
+			, requester
+			, DATE(request_date) as request_date
+			, RD.state
+			, priority
+			, DATE(RD.create_date) as create_date
 		FROM
-			REQ_DOC_TB
+			REQ_DOC_TB RD LEFT JOIN SITE_MGR_TB SM
+			ON RD.site_idx = SM.site_idx
 		WHERE
 			req_idx = #{req_idx}
 	</select>

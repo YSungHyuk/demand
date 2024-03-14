@@ -21,9 +21,9 @@
 	<script src="${pageContext.request.contextPath }/resources/js/mainRequest.js"></script>
 	<div class="container">
 		<div class="row">
-			<div class="col-sm-12">
+			<div class="col-sm-12 d-none d-lg-block">
 			    <div class="flex-row d-flex justify-content-between">
-					<div class="col-lg-6 col-12 px-1">
+					<div class="col-10 px-1">
 						<div class="input-group">
 							<label for="StartDate">
 								<input type='text' id='StartDate' class='form-control form-control-sm text-center m-3' readonly="readonly" placeholder='시작일'>

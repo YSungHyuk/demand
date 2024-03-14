@@ -3,12 +3,13 @@
 <mapper namespace="net.smarthaccp.demand.mapper.FileMapper" >
 	<insert id="insertFile" parameterType="FileVO">
 		INSERT INTO
-			FILE_MASTER_TB(file_idx,seq,uuid,file_name,file_path)
+			FILE_MASTER_TB(file_idx,seq,uuid,file_name,file_extension,file_path)
 			VALUES(
 				#{file_idx}
 				, #{seq}
 				, #{uuid}
 				, #{file_name}
+				, #{file_extension}
 				, #{file_path}
 			)
 	</insert>
@@ -20,4 +21,24 @@
 		WHERE
 			file_idx = #{file_idx}
 	</select>
+	<select id="selectMaxSeq" parameterType="String" resultType="int">
+		SELECT
+			MAX(seq)+1
+		FROM
+			FILE_MASTER_TB
+		WHERE
+			file_idx = #{file_idx}
+	</select>
+	<delete id="deleteFile">
+		DELETE FROM
+			FILE_MASTER_TB
+		WHERE
+			file_idx = #{file_idx}
+			AND seq IN (
+			<foreach collection="deleteList" item="delete" separator=",">
+				${delete}			
+			</foreach>
+			)
+			
+	</delete>
 </mapper>

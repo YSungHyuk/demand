@@ -229,7 +229,7 @@ $(function() {
 	// 아이템 등록
 	$("#inser_item").on("click",function() {
 		let _width = '1000';
-		let _height = '800';
+		let _height = '510';
 	    let _left = Math.ceil((window.screen.width - _width )/2);
 	    let _top = Math.ceil((window.screen.height - _height )/2); 
 	
@@ -262,7 +262,7 @@ const itemUpdate = idx => {
 	console.log(idx);
 	
 	let _width = '1000';
-	let _height = '1000';
+	let _height = '510';
     let _left = Math.ceil((window.screen.width - _width )/2);
     let _top = Math.ceil((window.screen.height - _height )/2); 
 

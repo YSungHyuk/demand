@@ -7,7 +7,7 @@
 			, site_company_name
 			, state
 		FROM
-			SITE_MGR_TB
+			SITE_MASTER_TB
 		WHERE	
 		<choose>
 			<when test="!searchKeyword.equals('')">

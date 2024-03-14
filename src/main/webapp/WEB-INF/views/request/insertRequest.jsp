@@ -3,7 +3,7 @@
 <html>
 <head>
 	<title>요구사항 등록</title>
-	<link rel="stylesheet" href="/resources/css/insertRequest.css">
+	<link rel="stylesheet" href="/resources/css/request.css">
 </head>
 <body>
 	<header>
@@ -70,7 +70,7 @@
 					<div class="row mb-3">
 						<label class="col-sm-2 col-form-label" for="request_date">요청일</label>
 						<div class="col-sm-10">
-							<input type="text" autocomplete="off" class="form-control" name="request_date" id="request_date" required>
+							<input type="text" autocomplete="off" class="form-control" name="request_date" id="request_date" required readonly>
 						</div>
 					</div>
 					<div class="row mb-3">
@@ -82,7 +82,7 @@
 					<div class="row mb-3">
 						<label class="col-sm-2 col-form-label" for="content">내용</label>
 						<div class="col-sm-10">
-							<textarea class="form-control" autocomplete="off" name="content" id="content" rows="5" required></textarea>
+							<textarea class="form-control" autocomplete="off" name="content" id="content" rows="5"></textarea>
 						</div>
 					</div>
 				</div>

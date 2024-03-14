@@ -14,7 +14,7 @@
 			, priority
 			, DATE(RD.create_date) as create_date
 		FROM
-			REQ_DOC_TB RD LEFT JOIN SITE_MGR_TB SM
+			REQ_DOC_TB RD LEFT JOIN SITE_MASTER_TB SM
 			ON RD.site_idx = SM.site_idx
 		WHERE	
 		<choose>
@@ -102,13 +102,14 @@
 			, content
 			, RD.site_idx
 			, SM.site_company_name
+			, file_idx
 			, requester
 			, DATE(request_date) as request_date
 			, RD.state
 			, priority
 			, DATE(RD.create_date) as create_date
 		FROM
-			REQ_DOC_TB RD LEFT JOIN SITE_MGR_TB SM
+			REQ_DOC_TB RD LEFT JOIN SITE_MASTER_TB SM
 			ON RD.site_idx = SM.site_idx
 		WHERE
 			req_idx = #{req_idx}

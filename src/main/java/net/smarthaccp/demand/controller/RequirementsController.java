@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
@@ -98,10 +97,12 @@ public class RequirementsController {
 			, HttpSession session
 			, @RequestPart(value="files", required=false) List<MultipartFile> files) {
 		
-		try {
-			request.setFile_idx(fileService.FileUpload(files, session));
-		} catch (Exception e) {
-			e.printStackTrace();
+		if(files != null && files.size() > 0) {
+			try {
+				request.setFile_idx(fileService.FileUpload(files, session, "0"));
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 		
 		request.setReq_idx(keyService.selectKey("REQ"));
@@ -118,7 +119,7 @@ public class RequirementsController {
 		RequestVO request = requestServices.selectRequest(req_idx);
 		model.addAttribute("request", request);
 
-		if(request.getFile_idx() != null && !request.getFile_idx().isEmpty()) {
+		if(request.getFile_idx() != null && !request.getFile_idx().trim().isEmpty()) {
 			List<FileVO> files = fileService.getFileList(request.getFile_idx());
 			model.addAttribute("files", files);
 		}
@@ -131,15 +132,18 @@ public class RequirementsController {
 	public ResponseEntity<Void> updateRequest(
 			@RequestPart(value="request", required=false) RequestVO request
 			, HttpSession session
-			, @RequestPart(value="files", required=false) List<MultipartFile> files) {
+			, @RequestPart(value="files", required=false) List<MultipartFile> files
+			, @RequestPart(value="deleteList", required=false) List<String> deleteList) {
 		
-//		request.setIdx(demandServices.updateRequest(request));
 		
-		try {
-//			fileService.FileUpload(request.getIdx(), files, session);
-		} catch (Exception e) {
-			e.printStackTrace();
+		if(deleteList != null && deleteList.size() > 0) {
+			fileService.FileUpdate(files, deleteList, session, request.getFile_idx());
+		} else {
+			fileService.FileUpload(files, session, request.getFile_idx());
 		}
+		
+		logger.info("!@#$ : "+ request.toString());
+		requestServices.updateRequest(request);
 		
 		return ResponseEntity.ok().build();
 	}

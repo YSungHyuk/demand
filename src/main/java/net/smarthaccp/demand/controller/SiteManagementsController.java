@@ -34,9 +34,7 @@ public class SiteManagementsController {
 	public ResponseEntity<List<Map<String,Object>>> getSiteNameList(@RequestBody SearchInfoVO searchInfo) {
 		
 		List<Map<String,Object>> siteNameList = siteService.getSiteNameList(searchInfo);
-		
-		logger.info("!@#$ : " + siteNameList.toString());
-		
+
 		return ResponseEntity.ok(siteNameList);
 	}
 }

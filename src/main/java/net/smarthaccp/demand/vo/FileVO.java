@@ -9,7 +9,7 @@ public class FileVO {
 	private Integer seq;
 	private String uuid;
 	private String file_name;
+	private String file_extension;
 	private String file_path;
 	private String create_date;
-	private String update_date;
 }

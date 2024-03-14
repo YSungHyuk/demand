@@ -59,8 +59,8 @@
 					<div class="row mb-3">
 						<label class="col-sm-2 col-form-label" for="company">회사</label>
 						<div class="col-sm-10" data-bs-toggle="modal" data-bs-target="#cpSearch">
-							<input type="hidden" name="site_idx" id="site_idx" required>
-							<input type="text" autocomplete="off" class="form-control" name="company" id="company" required readonly value="${request.site_company_name }">
+							<input type="hidden" name="site_idx" value="${request.site_idx }">
+							<input type="text" autocomplete="off" class="form-control" id="company" name="site_company_name" required readonly value="${request.site_company_name }">
 						</div>
 					</div>
 					<div class="row mb-3">
@@ -96,37 +96,38 @@
 						</div>
 					</div>
 					<div id="files" class="files mb-3">
-						${files }
-						<c:forEach items="${files }" var="file" varStatus="status">
-							<div class="file">
-								<div class="thumbnail">
-									<c:choose>
-										<c:when test="${file.file_extension eq 'jpg' or file.file_extension eq 'png'}">
-											<img src="${pageContext.request.contextPath}${file.file_path}/${file.uuid}_${file.file_name}" alt="이미지" class="image">
-										</c:when>
-										<c:otherwise>
-											<img src="https://img.icons8.com/pastel-glyph/2x/image-file.png" alt="파일타입" class="image">
-										</c:otherwise>
-									</c:choose>
+						<c:if test="${request.file_idx ne null }">
+							<input type="hidden" value="${request.file_idx }" name="file_idx">
+							<c:forEach items="${files }" var="file" varStatus="status">
+								<div class="file">
+									<div class="thumbnail">
+										<c:choose>
+											<c:when test="${file.file_extension eq 'jpg' or file.file_extension eq 'png'}">
+												<img src="${pageContext.request.contextPath}${file.file_path}/${file.uuid}_${file.file_name}" alt="이미지" class="image">
+											</c:when>
+											<c:otherwise>
+												<img src="https://img.icons8.com/pastel-glyph/2x/image-file.png" alt="파일타입" class="image">
+											</c:otherwise>
+										</c:choose>
+									</div>
+									<div class="details">
+										<header class="header">
+											<span class="name downloadFile pointer">
+												<input type="hidden" value="${pageContext.request.contextPath}${file.file_path}/${file.uuid}_${file.file_name}" id="${file.file_name }">
+												${file.file_name}
+											</span>
+											<span class="size">size</span>
+										</header>
+									</div>
+									<div class="oldFileDelete deleteHover">
+										<input type="hidden" value="${file.seq}">
+										<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" class="bi bi-x-lg pointer" viewBox="0 0 16 16">
+											<path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/>
+										</svg>
+									</div>
 								</div>
-								<div class="details">
-									<header class="header">
-										<span class="name downloadFile">
-											<input type="hidden" value="${pageContext.request.contextPath}${file.file_path}/${file.uuid}_${file.file_name}" id="${file.file_name }">
-											${file.file_name}
-										</span>
-										<span class="size">size</span>
-									</header>
-								</div>
-								<div class="oldFileDelete deleteHover">
-									<input type="hidden" value="${file.seq}">
-									<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" class="bi bi-x-lg pointer" viewBox="0 0 16 16">
-										<path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/>
-									</svg>
-								</div>
-							</div>
-						</c:forEach>
-						
+							</c:forEach>
+						</c:if>
 					</div>
 				</div>
 			</div>

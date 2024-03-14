@@ -16,5 +16,5 @@ public interface FileMapper {
 
 	int selectMaxSeq(String file_idx);
 
-	void deleteFile(@Param("deleteList") List<String> deleteList, @Param("file_idx")String file_idx);
+	void deleteFile(@Param("deleteList") List<Integer> deleteList, @Param("file_idx")String file_idx);
 }

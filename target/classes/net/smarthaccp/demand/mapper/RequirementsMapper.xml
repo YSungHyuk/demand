@@ -16,32 +16,33 @@
 		FROM
 			REQ_DOC_TB RD LEFT JOIN SITE_MASTER_TB SM
 			ON RD.site_idx = SM.site_idx
-		WHERE	
+		WHERE
+			RD.state != '삭제'
 		<choose>
 			<when test="searchType != null and !searchKeyword.equals('')">
 				<choose>
 					<when test="searchType.equals('any')">
-						type like concat('%',#{searchKeyword},'%')
+						AND type like concat('%',#{searchKeyword},'%')
 						OR title like concat('%',#{searchKeyword},'%')
 						OR SM.site_company_name like concat('%',#{searchKeyword},'%')
 						OR state like concat('%',#{searchKeyword},'%')
 					</when>
 					<when test="searchType.equals('type')">
-						type like concat('%',#{searchKeyword},'%')
+						AND type like concat('%',#{searchKeyword},'%')
 					</when>
 					<when test="searchType.equals('title')">
-						title like concat('%',#{searchKeyword},'%')
+						AND title like concat('%',#{searchKeyword},'%')
 					</when>
 					<when test="searchType.equals('company')">
-						SM.site_company_name like concat('%',#{searchKeyword},'%')
+						AND SM.site_company_name like concat('%',#{searchKeyword},'%')
 					</when>
 					<when test="searchType.equals('state')">
-						state like concat('%',#{searchKeyword},'%')
+						AND state like concat('%',#{searchKeyword},'%')
 					</when>
 				</choose>
 			</when>
 			<otherwise>
-				1=1
+				AND 1=1
 			</otherwise>
 		</choose>
 		<choose>
@@ -88,11 +89,39 @@
 			REQ_DOC_TB
 	    <set>
 			<if test="type != null and type !=''">
-				type = ${type},	
+				type = #{type},	
 			</if>	    
+			<if test="title != null and title !=''">
+				title = #{title},	
+			</if>	    
+			<if test="content != null and content !=''">
+				content = #{content},	
+			</if>	    
+			<if test="site_idx != null and site_idx !=''">
+				site_idx = #{site_idx},	
+			</if>	    
+			<if test="requester != null and requester !=''">
+				requester = #{requester},	
+			</if>	    
+			<if test="request_date != null and request_date !=''">
+				request_date = #{request_date},	
+			</if>	    
+			<if test="priority != null and priority !=''">
+				priority = #{priority},	
+			</if>
+			<if test="file_idx !=''">
+				<choose>
+					<when test="file_idx == null">
+						file_idx = #{file_idx, jdbcType = VARCHAR},
+					</when>
+					<otherwise>
+						file_idx = #{file_idx},	
+					</otherwise>
+				</choose>
+			</if>
 	    </set>
 	    WHERE
-	    	req_idx = ${req_idx}
+	    	req_idx = #{req_idx}
 	</update>
 	<select id="selectRequest" resultType="RequestVO" parameterType="String">
 		SELECT
@@ -114,4 +143,12 @@
 		WHERE
 			req_idx = #{req_idx}
 	</select>
+	<update id="deleteRequest" parameterType="String">
+		UPDATE
+			REQ_DOC_TB
+		SET
+			state = '삭제'
+		WHERE
+			req_idx = #{req_idx}
+	</update>
 </mapper>

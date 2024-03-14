@@ -243,7 +243,6 @@ $(function() {
 	getGrid();
 });
 
-
 //날짜 변환
 const dateFormat = data => {
 	let date = new Date(data)
@@ -258,8 +257,6 @@ const dateFormat = data => {
 
 // 아이템 수정
 const itemUpdate = idx => {
-	
-	console.log(idx);
 	
 	let _width = '1000';
 	let _height = '510';
@@ -277,9 +274,18 @@ const itemUpdate = idx => {
 const itemDelete = idx => {
 	let isDelete = confirm("삭제하시겠습니까?");
 
-   if(isDelete) {
-      console.log("삭제")
-   }
+	if(isDelete) {
+		fetch(`/api/requirements/request/${idx}`, {
+				method: 'DELETE',
+				header: {}
+		})		
+		.then(response => {
+			if(response.status === 200) {
+				location.reload(true);
+			}
+		})
+		.catch(error => console.error(error));
+	}
 }
 
 // post 방식으로 새창열기
@@ -300,4 +306,3 @@ const postOpen = (verb, url, data, target) => {
     document.body.appendChild(form);
     form.submit();
 }
-

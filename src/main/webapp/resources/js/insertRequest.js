@@ -220,7 +220,6 @@ function initfunc() {
 			if(pair[0] != 'file') request[pair[0]] = pair[1];
 		}
 		
-		
 		for (let i=0; i < uploadList.length; i++) {
 			if(uploadList[i] !== undefined) formData.append("files",uploadList[i]);  
 		}

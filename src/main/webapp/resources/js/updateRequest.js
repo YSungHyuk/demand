@@ -216,22 +216,19 @@ function initfunc() {
 		let formData = new FormData();
 		let request = {}
 		
-//		for (const pair of new FormData($("#form")[0]).entries()) {
-//			if(pair[0] != 'file') request[pair[0]] = pair[1];
-//		}
+		for (const pair of new FormData($("#form")[0]).entries()) {
+			if(pair[0] != 'file') request[pair[0]] = pair[1];
+		}
 		
 		for (let i=0; i < uploadList.length; i++) {
 			if(uploadList[i] !== undefined) formData.append("files",uploadList[i]);  
 		}
 		
-		for (let i=0; i < deleteList.length; i++) {
-			if(deleteList[i] !== undefined) formData.append("deleteList",deleteList[i]);  
-		}
 		
-		
+		formData.append("deleteList", new Blob([JSON.stringify(deleteList)],{type: "application/json"}));
 		formData.append("request", new Blob([JSON.stringify(request)],{type: "application/json"}));
 		
-		fetch('/api/requirements/request', {
+		fetch(`/api/requirements/request`, {
 			method: 'PUT',
 			headers: {},
 			body: formData

@@ -17,4 +17,6 @@ public interface RequirementsMapper {
 	int insertRequest(RequestVO request);
 
 	int updateRequest(RequestVO request);
+
+	void deleteRequest(String req_idx);
 }

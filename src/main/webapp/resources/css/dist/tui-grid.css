@@ -433,7 +433,7 @@
 }
 .tui-grid-border-line {
   position: absolute;
-  z-index: 15;
+  z-index: 10;
 }
 .tui-grid-border-line-top {
   top: 0;

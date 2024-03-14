@@ -61,7 +61,7 @@ public class FileService {
     		
     		int seq = 1;
     		
-    		if(file_idx.equals("0")) {
+    		if(file_idx == null || file_idx.equals("0")) {
     			file_idx = keyService.selectKey("FILE");
     		} else {
     			seq = fileMapper.selectMaxSeq(file_idx);
@@ -75,8 +75,6 @@ public class FileService {
     			if(file.getOriginalFilename().length() == 0) continue;
     			
     			FileVO vo = new FileVO();
-    			
-    			logger.info(file.toString());
     			
     			vo.setFile_idx(file_idx);
     			vo.setFile_name(file.getOriginalFilename());
@@ -97,38 +95,38 @@ public class FileService {
     			
     			seq++;
     		}
-    		return file_idx;
-    	} else {
-    		return "";
     	}
+    	
+    	return file_idx;
     }
     
-    public void FileUpdate(
+    public String FileUpdate(
     		List<MultipartFile> files
-    		, List<String> deleteList
+    		, List<Integer> deleteList
     		, HttpSession session
     		, String file_idx) {
     	
-    	FileUpload(files, session, file_idx);
+    	file_idx = FileUpload(files, session, file_idx);
     	
     	List<FileVO> fileList = fileMapper.getFileList(file_idx);
-    	
-    	fileList.forEach(data -> {
-    		deleteList.forEach(seq -> {
-    			if(data.getSeq().equals(seq)) {
-    				logger.info("data의 seq : "+ data.getSeq());
-    				logger.info("delete의 seq : "+ seq);
-    				File file = new File(data.getFile_path()+File.separator+data.getUuid()+"_"+data.getFile_name());
+
+    	for(FileVO data : fileList) {
+    		for(int seq : deleteList) {
+    			if(data.getSeq() == seq) {
+    				File file = new File(session.getServletContext().getRealPath(data.getFile_path())+File.separator+data.getUuid()+"_"+data.getFile_name());
     				if(file.exists()) file.delete();
     			}
-    		});
-    	});
+    		}
+    	}
     	
     	fileMapper.deleteFile(deleteList, file_idx);
+    	
+    	if(fileMapper.getFileList(file_idx).size() == 0) file_idx = null;
+    	
+    	return file_idx;
     }
     
 	public List<FileVO> getFileList(String file_idx) {
 		return fileMapper.getFileList(file_idx);
 	}
-
 }

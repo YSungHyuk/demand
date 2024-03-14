@@ -31,4 +31,8 @@ public class RequirementsService {
 		return requestMapper.updateRequest(request);
 	}
 
+	public void deleteRequest(String req_idx) {
+		requestMapper.deleteRequest(req_idx);
+	}
+
 }

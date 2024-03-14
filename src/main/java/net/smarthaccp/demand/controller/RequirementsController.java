@@ -78,8 +78,6 @@ public class RequirementsController {
 		
 		result.put("requestList",requestList);
 		
-		logger.info(requestList.toString());
-		
 		result.put("pageInfo",pageInfo);
 		
 		return ResponseEntity.ok(result);
@@ -133,17 +131,25 @@ public class RequirementsController {
 			@RequestPart(value="request", required=false) RequestVO request
 			, HttpSession session
 			, @RequestPart(value="files", required=false) List<MultipartFile> files
-			, @RequestPart(value="deleteList", required=false) List<String> deleteList) {
-		
+			, @RequestPart(value="deleteList", required=false) List<Integer> deleteList) {
 		
 		if(deleteList != null && deleteList.size() > 0) {
-			fileService.FileUpdate(files, deleteList, session, request.getFile_idx());
+			request.setFile_idx(fileService.FileUpdate(files, deleteList, session, request.getFile_idx()));
 		} else {
-			fileService.FileUpload(files, session, request.getFile_idx());
+			request.setFile_idx(fileService.FileUpload(files, session, request.getFile_idx()));
 		}
 		
-		logger.info("!@#$ : "+ request.toString());
 		requestServices.updateRequest(request);
+		
+		return ResponseEntity.ok().build();
+	}
+	
+	@ResponseBody
+	@RequestMapping(value="request/{req_idx}", method = RequestMethod.DELETE)
+	public ResponseEntity<Void> deleteRequest(
+			@PathVariable(name="req_idx") String req_idx) {
+		
+		requestServices.deleteRequest(req_idx);
 		
 		return ResponseEntity.ok().build();
 	}

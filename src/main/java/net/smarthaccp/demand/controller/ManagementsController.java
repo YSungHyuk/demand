@@ -14,20 +14,20 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import net.smarthaccp.demand.services.KeyService;
-import net.smarthaccp.demand.services.SiteManagementsService;
+import net.smarthaccp.demand.services.ManagementsService;
 import net.smarthaccp.demand.vo.SearchInfoVO;
 
 @Controller
 @RequestMapping(value="/api/siteManagements")
-public class SiteManagementsController {
+public class ManagementsController {
 	
-	private static final Logger logger = LoggerFactory.getLogger(SiteManagementsController.class);
+	private static final Logger logger = LoggerFactory.getLogger(ManagementsController.class);
 	
 	@Autowired
 	private KeyService keyService;
 	
 	@Autowired
-	private SiteManagementsService siteService;
+	private ManagementsService siteService;
 	
 	@ResponseBody
 	@RequestMapping(value="companyNameSearch", method = RequestMethod.POST, produces = "application/json; charset=UTF-8")

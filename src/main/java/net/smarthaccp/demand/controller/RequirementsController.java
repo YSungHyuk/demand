@@ -83,9 +83,9 @@ public class RequirementsController {
 		return ResponseEntity.ok(result);
 	}
 	
-	@RequestMapping(value="insertRequest")
+	@RequestMapping(value="insert")
 	public String createRequest() {
-		return "request/insertRequest";
+		return "requirements/insert";
 	}
 	
 	@ResponseBody
@@ -109,7 +109,7 @@ public class RequirementsController {
 		return ResponseEntity.ok().build();
 	}
 	
-	@RequestMapping(value="updateRequest/{req_idx}")
+	@RequestMapping(value="update/{req_idx}")
 	public String updateRequest(
 				@PathVariable(name="req_idx") String req_idx
 				, Model model) {
@@ -122,7 +122,7 @@ public class RequirementsController {
 			model.addAttribute("files", files);
 		}
 		
-		return "request/updateRequest";
+		return "requirements/update";
 	}
 	
 	@ResponseBody
@@ -145,7 +145,7 @@ public class RequirementsController {
 	}
 	
 	@ResponseBody
-	@RequestMapping(value="request/{req_idx}", method = RequestMethod.DELETE)
+	@RequestMapping(value="delete/{req_idx}", method = RequestMethod.DELETE)
 	public ResponseEntity<Void> deleteRequest(
 			@PathVariable(name="req_idx") String req_idx) {
 		

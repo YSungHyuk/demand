@@ -23,8 +23,13 @@ public class HomeController {
 	}
 	
 	@RequestMapping(value="/requirements")
-	public String requestMain() {
-		return "request/mainRequest";
+	public String requirements() {
+		return "requirements/main";
+	}
+	
+	@RequestMapping(value="/managements")
+	public String siteManagements() {
+		return "managements/main";
 	}
 	
 }

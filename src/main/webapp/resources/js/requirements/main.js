@@ -45,9 +45,14 @@ $(function() {
 			{
 				header: '번호'
 				, width: 70
-				, name: 'req_idx'
+				, name: 'seq_idx'
 				, align: 'center'
 			    , sortingType: 'desc'
+			},
+			{
+				header: '번호'
+				, name: 'req_idx'
+				, hidden: true
 			},
 			{
 				header: '유형'
@@ -86,13 +91,6 @@ $(function() {
 				, align: 'center'
 				, sortable: true
 			},
-//			{
-//				header: '등록일'
-//				, width: 100					
-//				, name: 'create_date'
-//				, align: 'center'
-//				, sortable: true
-//			},
 			{
 				name: 'update'
 				, align: 'center'
@@ -233,7 +231,7 @@ $(function() {
 	    let _left = Math.ceil((window.screen.width - _width )/2);
 	    let _top = Math.ceil((window.screen.height - _height )/2); 
 	
-		let url = '/api/requirements/insertRequest';
+		let url = '/api/requirements/insert';
 		let target = 'Insert Requirement';
 		let option = 'location=no, directories=no,resizable=yes,status=no,toolbar=no,menubar=no, width='+_width+',height='+_height+',left='+_left+',top='+_top+',scrollbars=yes';
 
@@ -263,7 +261,7 @@ const itemUpdate = idx => {
     let _left = Math.ceil((window.screen.width - _width )/2);
     let _top = Math.ceil((window.screen.height - _height )/2); 
 
-	let url = `/api/requirements/updateRequest/${idx}`;
+	let url = `/api/requirements/update/${idx}`;
 	let target = 'Update Requirement';
 	let option = 'location=no, directories=no,resizable=yes,status=no,toolbar=no,menubar=no, width='+_width+',height='+_height+',left='+_left+',top='+_top+',scrollbars=yes';
 	
@@ -275,7 +273,7 @@ const itemDelete = idx => {
 	let isDelete = confirm("삭제하시겠습니까?");
 
 	if(isDelete) {
-		fetch(`/api/requirements/request/${idx}`, {
+		fetch(`/api/requirements/delete/${idx}`, {
 				method: 'DELETE',
 				header: {}
 		})		

@@ -5,6 +5,7 @@ import lombok.Data;
 @Data
 public class SiteVO {
 	private String site_idx;
+	private String seq_idx;
 	private String site_company_name;
 	private String web_id;
 	private String web_pw;

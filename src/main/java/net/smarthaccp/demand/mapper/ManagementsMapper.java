@@ -8,7 +8,7 @@ import org.apache.ibatis.annotations.Mapper;
 import net.smarthaccp.demand.vo.SearchInfoVO;
 
 @Mapper
-public interface SiteManagementsMapper {
+public interface ManagementsMapper {
 
 	List<Map<String,Object>> getSiteNameList(SearchInfoVO searchInfo);
 

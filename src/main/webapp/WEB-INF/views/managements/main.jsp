@@ -4,13 +4,15 @@
 <html>
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-	<title>Insert title here</title>
+	<title>사이트관리</title>
 </head>
+<%-- 
 <style>
 	.tui-grid-cell .tui-grid-cell-content{
 		overflow: auto;
 	}
 </style>
+--%>
 <body>
 	<header>
 		<jsp:include page="../inc/header.jsp" />
@@ -18,13 +20,13 @@
 	<nav>
 		<jsp:include page="../inc/nav.jsp" />
 	</nav>
-	<script src="${pageContext.request.contextPath }/resources/js/mainRequest.js"></script>
+	<script src="${pageContext.request.contextPath }/resources/js/managements/main.js"></script>
 	<div class="container">
 		<div class="row">
 			<div class="col-sm-12 d-none d-lg-block">
 			    <div class="flex-row d-flex justify-content-between">
 					<div class="col-10 px-1">
-						<div class="input-group">
+						<div class="input-group input-group-sm">
 							<label for="StartDate">
 								<input type='text' id='StartDate' class='form-control form-control-sm text-center m-3' readonly="readonly" placeholder='시작일'>
 							</label>
@@ -48,22 +50,21 @@
 			<div id="grid-view" class="col-sm-12"></div>
 		</div>
 		
-		<div class="row">
+		<div class="row justify-content-between">
 			<div class="col-sm-2"></div>
-			<div class="col-sm-8 col-12 text-center">
+			<div class="col-sm-6 col-10 text-center">
 				<div class="input-group mb-3">
 					<select id="search_type" class="form-select form-select-sm">
 						<option value="any" selected>전체</option>
-						<option value="type">유형</option>
-						<option value="title">제목</option>
-						<option value="company">회사</option>
+						<option value="site_company_name">회사명</option>
+						<option value="business_level">사업단위</option>
 						<option value="state">상태</option>
 					</select>
 					<input type="text" class="form-control" id="search_box" aria-describedby="selectGrid" placeholder="검색">
 					<button type="button" id="selectGrid" class="btn btn-outline-secondary">조회</button>
 				</div>
 			</div>
-			<div class="col-sm-2">
+			<div class="col-2 text-center">
 				<button id="inser_item" class="btn btn-outline-secondary">
 					등록
 				</button>

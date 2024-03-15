@@ -4,6 +4,7 @@
 	<select id="getRequestList" parameterType="SearchInfoVO" resultType="RequestVO">
 		SELECT
 			req_idx
+			, RD.seq_idx
 			, type
 			, title
 			, RD.site_idx
@@ -63,6 +64,8 @@
 				]]>
 			</when>
 		</choose>
+		ORDER BY
+			seq_idx desc
 		<if test="startRow != null and listLimit != null">
 			limit
 				${startRow}

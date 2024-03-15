@@ -118,11 +118,12 @@ function initView(gridAreaId,gridId,pickerId) {
 		el: document.getElementById(gridId)
 		, scrollX: false
 		, scrollY: true
-		, bodyHeight: 300
+		, bodyHeight: 250
 		, columns: [
 			{
 				header: '관리번호'
 				, name: 'site_idx'
+				, width: '70'
 				, align: 'center'
 			},
 			{
@@ -169,7 +170,6 @@ function initView(gridAreaId,gridId,pickerId) {
 	
 }
 
-// 조회 버튼
 function initfunc() {
 	// 그리드 조회
 	function getGrid() {
@@ -184,7 +184,6 @@ function initfunc() {
 		})
 		.then(response => response.json())
 		.then(siteNameList => {
-			console.log(siteNameList);
 			grid.resetData(siteNameList);
 			grid.refreshLayout();
 		})
@@ -192,7 +191,7 @@ function initfunc() {
 	};
 
 	// 검색
-	$("#selectGrid").on("click",getGrid);
+	$("#selectGrid").on("click", getGrid);
 	
 	// 검색 엔터기능
     $("#searchBox").on("keydown", function(e){

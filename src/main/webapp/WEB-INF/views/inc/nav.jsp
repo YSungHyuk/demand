@@ -15,7 +15,7 @@
 		  	<a class="nav-link" href="/requirements">요구사항</a>
 		</li>
 		<li class="nav-item">
-		  	<a class="nav-link" href="#">관리사이트</a>
+		  	<a class="nav-link" href="/managements">관리사이트</a>
 		</li>
 	</ul>
 </nav>

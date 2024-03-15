@@ -6,6 +6,7 @@ import lombok.Data;
 public class RequestVO {
 	// 세부
 	private String req_idx;
+	private String seq_idx;
 	private String type;
 	private String title;
 	private String content;

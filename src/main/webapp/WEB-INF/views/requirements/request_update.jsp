@@ -4,13 +4,13 @@
 <html>
 <head>
 	<title>요구사항 수정</title>
-	<link rel="stylesheet" href="/resources/css/request.css">
+	<link rel="stylesheet" href="/resources/css/etc/file.css">
 </head>
 <body>
 	<header>
 		<jsp:include page="../inc/header.jsp" />
 	</header>
-	<script src="${pageContext.request.contextPath }/resources/js/requirements/update.js"></script>
+	<script src="${pageContext.request.contextPath }/resources/js/requirements/request_update.js"></script>
 	<form id="form" enctype="multipart/form-data">
 		<input type="hidden" value="${request.req_idx }" name="req_idx">
 		<div class="container">
@@ -60,7 +60,7 @@
 						<label class="col-sm-2 col-form-label" for="company">회사</label>
 						<div class="col-sm-10" data-bs-toggle="modal" data-bs-target="#cpSearch">
 							<input type="hidden" name="site_idx" value="${request.site_idx }">
-							<input type="text" autocomplete="off" class="form-control" id="company" name="site_company_name" required readonly value="${request.site_company_name }">
+							<input type="text" autocomplete="off" class="form-control" id="company" name="site_name" required readonly value="${request.site_name }">
 						</div>
 					</div>
 					<div class="row mb-3">
@@ -100,13 +100,13 @@
 							<input type="hidden" value="${request.file_idx }" name="file_idx">
 							<c:forEach items="${files }" var="file" varStatus="status">
 								<div class="file">
-									<div class="thumbnail">
+									<div class="thumbnail" data-bs-toggle="modal" data-bs-target="#thumbnail">
 										<c:choose>
-											<c:when test="${file.file_extension eq 'jpg' or file.file_extension eq 'png'}">
-												<img src="${pageContext.request.contextPath}${file.file_path}/${file.uuid}_${file.file_name}" alt="이미지" class="image">
+											<c:when test="${file.file_type eq 'image'}">
+												<img src="${pageContext.request.contextPath}${file.file_path}/${file.uuid}_${file.file_name}" alt="이미지" class="image pointer">
 											</c:when>
 											<c:otherwise>
-												<img src="https://img.icons8.com/pastel-glyph/2x/image-file.png" alt="파일타입" class="image">
+												<img src="https://img.icons8.com/pastel-glyph/2x/image-file.png" alt="파일타입" class="image pointer">
 											</c:otherwise>
 										</c:choose>
 									</div>
@@ -168,9 +168,15 @@
 						</div>
 					</div>
 				</div>
-	<!-- 			<div class="modal-footer"> -->
-	<!-- 				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button> -->
-	<!-- 			</div> -->
+			</div>
+		</div>
+	</div>
+	<div class="modal fade" id="thumbnail" data-bs-keyboard="false" tabindex="-1" aria-labelledby="thumbnail" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered">
+			<div class="modal-content">
+				<div class="modal-body">
+					<img id="modal-body-img">
+				</div>
 			</div>
 		</div>
 	</div>

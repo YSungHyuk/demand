@@ -10,6 +10,7 @@ public class FileVO {
 	private String uuid;
 	private String file_name;
 	private String file_extension;
+	private String file_type;
 	private String file_size;
 	private String file_path;
 	private String create_date;

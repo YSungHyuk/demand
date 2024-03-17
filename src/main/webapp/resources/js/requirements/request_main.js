@@ -64,11 +64,20 @@ $(function() {
 				header: '제목'
 				, name: 'title'
 				, align: 'center'
+				, formatter: function(item) {
+					let viewer = `
+					<div class="viewer" data-bs-toggle="modal" data-bs-target="#viewer" value=${item.row.req_idx}>
+						${item.value}
+					</div>
+					`;
+					
+					return viewer;
+				}
 			},
 			{
 				header: '회사'
 				, width: 200
-				, name: 'site_company_name'
+				, name: 'site_name'
 				, align: 'center'
 			},
 			{
@@ -95,8 +104,8 @@ $(function() {
 				name: 'update'
 				, align: 'center'
 				, width: 55
-				, formatter: function(item) {
-					let addBtn = "<button type='button' class='btn btn-sm btn-outline-secondary update' data-type='update'>수정</button>";
+				, formatter: function() {
+					let addBtn = "<button type='button' class='btn btn-sm btn-outline-secondary'>수정</button>";
 					return addBtn;
 				}
 			},
@@ -104,8 +113,8 @@ $(function() {
 				name: 'delete'
 				, align: 'center'
 				, width: 55
-				, formatter: function(item) {
-					let addBtn = "<button type='button' class='btn btn-sm btn-outline-secondary delete' data-type='delete'>삭제</button>";
+				, formatter: function() {
+					let addBtn = "<button type='button' class='btn btn-sm btn-outline-secondary delete'>삭제</button>";
 					return addBtn;
 				}
 			},
@@ -130,11 +139,16 @@ $(function() {
 			for(let row of e.instance.store.viewport.rows) {
 				if(row.rowKey === rowKey) itemUpdate(row.valueMap.req_idx.value);
 			}
-		} else if(e.columnName === 'delete' ) {
+		} else if(e.columnName === 'delete') {
 			// raw data 와 rowKey 비교 구문
 			for(let row of e.instance.store.viewport.rows) {
 				if(row.rowKey === rowKey) itemDelete(row.valueMap.req_idx.value);
 			}			
+		} else if(e.columnName === 'title') {
+			for(let row of e.instance.store.viewport.rows) {
+				if(row.rowKey === rowKey) itemSelect(row.valueMap.req_idx.value);
+			}	
+			
 		}
 		
 	});
@@ -241,18 +255,6 @@ $(function() {
 	getGrid();
 });
 
-//날짜 변환
-const dateFormat = data => {
-	let date = new Date(data)
-    let month = date.getMonth() + 1;
-    let day = date.getDate();
-
-    month = month >= 10 ? month : '0' + month;
-    day = day >= 10 ? day : '0' + day;
-
-    return date.getFullYear() + '-' + month + '-' + day;
-}
-
 // 아이템 수정
 const itemUpdate = idx => {
 	
@@ -283,6 +285,168 @@ const itemDelete = idx => {
 			}
 		})
 		.catch(error => console.error(error));
+	}
+}
+
+const itemSelect = idx => {
+	fetch(`/api/requirements/select/${idx}`)
+	.then(response => response.json())
+	.then(result => {
+		viewer(result);
+	})
+	.catch(error => console.error(error));
+}
+
+const viewer = item => {
+	
+	let request = item.request;
+	let files = item.files;
+	let path = window.location.pathname.substring(0, window.location.pathname.indexOf("/",2));
+	
+	$(".modal-body").empty();
+	let body = `
+		<div class="container">
+		<div class="row" id="modalRow">
+			<div class="col-12 col-lg-6" id="modalCol">
+				<div class="row mb-3 mt-3 align-items-center">
+					<div class="col-6">
+						<div class="container">
+							<div class="row align-items-center">
+								<label class="col-sm-4 col-form-label">유형</label>
+								<div class="col-sm-8">
+									<div class="input-group">
+										<div class="form-check me-3">
+											<input class="form-check-input" type="radio" name="type" id="type1" value="신규" onclick="return(false);">
+											<label class="form-check-label" for="type1">신규</label>
+										</div>
+										<div class="form-check">
+											<input class="form-check-input" type="radio" name="type" id="type2" value="결함" onclick="return(false);">
+											<label class="form-check-label" for="type2">결함</label>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="col-6 align-items-center">
+						<div class="container">
+							<div class="row align-items-center">
+								<label class="col-sm-4 col-form-label">우선순위</label>
+								<div class="col-sm-8">
+									<div class="input-group">
+										<div class="form-check me-3">
+											<input class="form-check-input" type="radio" name="priority" id="priority1" value="보통" onclick="return(false);">
+											<label class="form-check-label" for="priority1">보통</label>
+										</div>
+										<div class="form-check">
+											<input class="form-check-input" type="radio" name="priority" id="priority2" value="긴급" onclick="return(false);">
+											<label class="form-check-label" for="priority2">긴급</label>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="row mb-3">
+					<label class="col-sm-2 col-form-label" for="company">회사</label>
+					<div class="col-sm-10">
+						<input type="hidden" name="site_idx" id="site_idx">
+						<input type="text" class="form-control" id="company" readonly>
+					</div>
+				</div>
+				<div class="row mb-3">
+					<label class="col-sm-2 col-form-label" for="requester">요청자</label>
+					<div class="col-sm-10">
+						<input type="text" class="form-control" id="requester" readonly>
+					</div>
+				</div>
+				<div class="row mb-3">
+					<label class="col-sm-2 col-form-label" for="request_date">요청일</label>
+					<div class="col-sm-10">
+						<input type="text" class="form-control" id="request_date" readonly>
+					</div>
+				</div>
+				<div class="row mb-3">
+					<label class="col-sm-2 col-form-label" for="title">제목</label>
+					<div class="col-sm-10">
+						<input type="text" class="form-control" id="title" readonly>
+					</div>
+				</div>
+				<div class="row mb-3">
+					<label class="col-sm-2 col-form-label" for="content">내용</label>
+					<div class="col-sm-10">
+						<textarea class="form-control" id="content" rows="11" readonly style="resize:none;"></textarea>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="container">
+			<div class="row text-center">
+				<div class="col">
+					<div class="btn-group" role="group">
+						<button type="button" id="submitBtn" class="btn btn-outline-secondary">접수</button>
+						<button type="button" id="closeBtn" class="btn btn-outline-secondary">닫기</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	`;
+	$(".modal-body").append(body);
+	
+	$("input[name=priority]").each(function() {
+		if($(this).val() == request.priority) $(this).attr('checked','checked');
+	})
+	
+	$("input[name=type]").each(function() {
+		if($(this).val() == request.type) $(this).attr('checked','checked');
+	})
+	
+	if(files === undefined) $("#modalCol").removeClass('col-lg-6');
+	
+	$("#company").val(request.site_name);
+	$("#requester").val(request.requester);
+	$("#request_date").val(request.request_date);
+	$("#title").val(request.title);
+	$("#content").val(request.content);
+	
+	body = `
+		<div class="col-12 col-lg-6">
+			<div id="Carousel" class="carousel slide" data-bs-ride="carousel">
+				<div class="carousel-indicators">
+				</div>
+				<div class="carousel-inner">
+				</div>
+				<button class="carousel-control-prev" type="button"
+					data-bs-target="#Carousel" data-bs-slide="prev">
+					<span class="carousel-control-prev-icon" aria-hidden="true"></span>
+					<span class="visually-hidden">Previous</span>
+				</button>
+				<button class="carousel-control-next" type="button"
+					data-bs-target="#Carousel" data-bs-slide="next">
+					<span class="carousel-control-next-icon" aria-hidden="true"></span>
+					<span class="visually-hidden">Next</span>
+				</button>
+			</div>
+		</div>
+	`;
+	
+	$("#modalRow").append(body);
+	
+	for(let file of files) {
+		console.log(JSON.stringify(file));
+		let indicators = `
+			<button type="button" data-bs-target="#Carousel" data-bs-slide-to="${file.seq }" class="active" aria-current="true" aria-label="Slide ${file.seq }"></button>
+		`;
+		$(".carousel-indicators").append(indicators);
+		
+		let inner = `
+		    <div class="carousel-item ${file.seq === 1 ? 'active' : ''}">
+	        	<img src="${path}${file.file_path}/${file.uuid}_${file.file_name}" class="d-block modal-carousel" alt="첨부이미지${file.seq}">
+		    </div>
+		`;
+		$(".carousel-inner").append(inner);
 	}
 }
 

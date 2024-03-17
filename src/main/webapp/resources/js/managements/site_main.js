@@ -56,18 +56,31 @@ $(function() {
 			},
 			{
 				header: '회사명'
-				, width: 70
-				, name: 'site_company_name'
+				, name: 'site_name'
+				, align: 'center'
+			},
+			{
+				header: '대표이사'
+				, name: 'site_ceo'
 				, align: 'center'
 			},
 			{
 				header: '사업단위'
+				, width: 140
 				, name: 'business_level'
 				, align: 'center'
 			},
 			{
+				header: '웹 페이지 주소'
+				, name: 'site_url'
+				, align: 'center'
+				, formatter: function(item) {
+					return `<a href="#">${item.value}<a>`;
+				}
+			},
+			{
 				header: '상태'
-				, width: 200
+				, width: 70
 				, name: 'state'
 				, align: 'center'
 			},
@@ -75,8 +88,8 @@ $(function() {
 				name: 'update'
 				, align: 'center'
 				, width: 55
-				, formatter: function(item) {
-					let addBtn = "<button type='button' class='btn btn-sm btn-outline-secondary update' data-type='update'>수정</button>";
+				, formatter: function() {
+					let addBtn = "<button type='button' class='btn btn-sm btn-outline-secondary'>수정</button>";
 					return addBtn;
 				}
 			},
@@ -84,8 +97,8 @@ $(function() {
 				name: 'delete'
 				, align: 'center'
 				, width: 55
-				, formatter: function(item) {
-					let addBtn = "<button type='button' class='btn btn-sm btn-outline-secondary delete' data-type='delete'>삭제</button>";
+				, formatter: function() {
+					let addBtn = "<button type='button' class='btn btn-sm btn-outline-secondary'>삭제</button>";
 					return addBtn;
 				}
 			},
@@ -108,12 +121,16 @@ $(function() {
 		if(e.columnName === 'update') {
 			// raw data 와 rowKey 비교 구문
 			for(let row of e.instance.store.viewport.rows) {
-				if(row.rowKey === rowKey) itemUpdate(row.valueMap.req_idx.value);
+				if(row.rowKey === rowKey) itemUpdate(row.valueMap.site_idx.value);
 			}
 		} else if(e.columnName === 'delete' ) {
 			// raw data 와 rowKey 비교 구문
 			for(let row of e.instance.store.viewport.rows) {
-				if(row.rowKey === rowKey) itemDelete(row.valueMap.req_idx.value);
+				if(row.rowKey === rowKey) itemDelete(row.valueMap.site_idx.value);
+			}			
+		} else if(e.columnName === 'site_url') {
+			for(let row of e.instance.store.viewport.rows) {
+				if(row.rowKey === rowKey) pageLink(row.valueMap.site_url.value);
 			}			
 		}
 		
@@ -142,7 +159,7 @@ $(function() {
 		.then(response => response.json())
 		.then(result => {
 			pageList(result.pageInfo);
-			grid.resetData(result.requestList);
+			grid.resetData(result.siteList);
 			grid.refreshLayout();
 		})
 		.catch(error => console.error(error));
@@ -206,7 +223,7 @@ $(function() {
 	
 	// 아이템 등록
 	$("#inser_item").on("click",function() {
-		let _width = '1000';
+		let _width = '1200';
 		let _height = '510';
 	    let _left = Math.ceil((window.screen.width - _width )/2);
 	    let _top = Math.ceil((window.screen.height - _height )/2); 
@@ -219,24 +236,13 @@ $(function() {
 	});
 	
 	getGrid();
+	
 });
-
-//날짜 변환
-const dateFormat = data => {
-	let date = new Date(data)
-    let month = date.getMonth() + 1;
-    let day = date.getDate();
-
-    month = month >= 10 ? month : '0' + month;
-    day = day >= 10 ? day : '0' + day;
-
-    return date.getFullYear() + '-' + month + '-' + day;
-}
 
 // 아이템 수정
 const itemUpdate = idx => {
 	
-	let _width = '1000';
+	let _width = '1200';
 	let _height = '510';
     let _left = Math.ceil((window.screen.width - _width )/2);
     let _top = Math.ceil((window.screen.height - _height )/2); 
@@ -264,6 +270,16 @@ const itemDelete = idx => {
 		})
 		.catch(error => console.error(error));
 	}
+}
+
+// 아이템 삭제
+const pageLink = url => {
+	const link = document.createElement('a');
+	link.href = url
+	link.target = '_blank';
+	document.body.appendChild(link);
+	link.click();
+	document.body.removeChild(link);
 }
 
 // post 방식으로 새창열기

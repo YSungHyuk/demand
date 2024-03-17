@@ -5323,6 +5323,21 @@ textarea.form-control-lg {
   padding: 1rem;
 }
 
+#modal-body-img {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  width: 50%; 
+}
+
+.modal-carousel {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  width: 75%;
+  min-height: 600px; 
+}
+
 .modal-footer {
   display: flex;
   flex-wrap: wrap;

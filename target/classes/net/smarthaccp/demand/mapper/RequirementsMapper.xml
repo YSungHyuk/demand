@@ -8,7 +8,7 @@
 			, type
 			, title
 			, RD.site_idx
-			, SM.site_company_name
+			, SM.site_name
 			, requester
 			, DATE(request_date) as request_date
 			, RD.state
@@ -25,7 +25,7 @@
 					<when test="searchType.equals('any')">
 						AND type like concat('%',#{searchKeyword},'%')
 						OR title like concat('%',#{searchKeyword},'%')
-						OR SM.site_company_name like concat('%',#{searchKeyword},'%')
+						OR SM.site_name like concat('%',#{searchKeyword},'%')
 						OR state like concat('%',#{searchKeyword},'%')
 					</when>
 					<when test="searchType.equals('type')">
@@ -35,7 +35,7 @@
 						AND title like concat('%',#{searchKeyword},'%')
 					</when>
 					<when test="searchType.equals('company')">
-						AND SM.site_company_name like concat('%',#{searchKeyword},'%')
+						AND SM.site_name like concat('%',#{searchKeyword},'%')
 					</when>
 					<when test="searchType.equals('state')">
 						AND state like concat('%',#{searchKeyword},'%')
@@ -133,8 +133,8 @@
 			, title
 			, content
 			, RD.site_idx
-			, SM.site_company_name
-			, file_idx
+			, SM.site_name
+			, RD.file_idx
 			, requester
 			, DATE(request_date) as request_date
 			, RD.state

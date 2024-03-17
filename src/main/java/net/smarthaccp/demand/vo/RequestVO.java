@@ -11,7 +11,7 @@ public class RequestVO {
 	private String title;
 	private String content;
 	private String site_idx;
-	private String site_company_name;
+	private String site_name;
 	private String requester;
 	private String request_date;
 	private String state;

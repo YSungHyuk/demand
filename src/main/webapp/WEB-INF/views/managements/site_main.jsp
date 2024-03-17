@@ -20,7 +20,7 @@
 	<nav>
 		<jsp:include page="../inc/nav.jsp" />
 	</nav>
-	<script src="${pageContext.request.contextPath }/resources/js/managements/main.js"></script>
+	<script src="${pageContext.request.contextPath }/resources/js/managements/site_main.js"></script>
 	<div class="container">
 		<div class="row">
 			<div class="col-sm-12 d-none d-lg-block">
@@ -56,7 +56,8 @@
 				<div class="input-group mb-3">
 					<select id="search_type" class="form-select form-select-sm">
 						<option value="any" selected>전체</option>
-						<option value="site_company_name">회사명</option>
+						<option value="site_name">회사명</option>
+						<option value="site_ceo">대표이사</option>
 						<option value="business_level">사업단위</option>
 						<option value="state">상태</option>
 					</select>

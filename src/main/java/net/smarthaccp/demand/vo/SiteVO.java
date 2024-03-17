@@ -4,13 +4,20 @@ import lombok.Data;
 
 @Data
 public class SiteVO {
+	// Master
 	private String site_idx;
 	private String seq_idx;
-	private String site_company_name;
-	private String web_id;
-	private String web_pw;
-	private String maintenance_start_date;
-	private String maintenance_end_date;
+	private String site_name;
+	private String site_ceo;
+	private String business_level;
+	private String business_start_date;
+	private String business_end_date;
 	private String state;
+	private String file_idx;
 	private String create_date;
+	private String update_date;
+	
+	// Detail
+	private String site_url;
+	private String site_port;
 }

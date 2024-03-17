@@ -19,16 +19,16 @@ public class RequirementsService {
 		return requestMapper.getRequestList(searchInfo);
 	}
 
-	public int insertRequest(RequestVO request) {
-		return requestMapper.insertRequest(request);
+	public void insertRequest(RequestVO request) {
+		requestMapper.insertRequest(request);
 	}
 
 	public RequestVO selectRequest(String req_idx) {
 		return requestMapper.selectRequest(req_idx);
 	}
 
-	public int updateRequest(RequestVO request) {
-		return requestMapper.updateRequest(request);
+	public void updateRequest(RequestVO request) {
+		requestMapper.updateRequest(request);
 	}
 
 	public void deleteRequest(String req_idx) {

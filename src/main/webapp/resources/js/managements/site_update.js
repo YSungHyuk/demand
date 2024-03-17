@@ -9,7 +9,7 @@ let grid;
 
 $(function() {
 	dropFile("drop-file", "files");
-	initView('companyGrid','grid-view','request_date');
+	initView('business_start_date','business_end_date');
 	initfunc();
 });
 
@@ -17,6 +17,8 @@ $(function() {
 function dropFile(dropAreaId, fileListId) {
 	let dropArea = document.getElementById(dropAreaId);
 	let fileList = document.getElementById(fileListId);
+
+	imageModal();
 
 	function preventDefaults(e) {
 		e.preventDefault();
@@ -55,6 +57,29 @@ function dropFile(dropAreaId, fileListId) {
 
 	function previewFile(file) {
 		fileList.appendChild(renderFile(file));
+		imageModal();
+	}
+
+	function imageModal() {
+		$(".image").on("click",function() {
+			$("#modal-body-img").attr('src',$(this).attr('src'));		
+		})
+	}	
+	
+	function readerFile(file, callback) {
+	    let reader = new FileReader();
+	    
+	    reader.onload = function(e) {
+	        let src;
+	        if(file.type.split('/')[0] === 'image') {
+	            src = e.target.result;
+	        } else {
+	            src = "https://img.icons8.com/pastel-glyph/2x/image-file.png";
+	        }
+	        callback(src);
+	    };
+	    
+	    reader.readAsDataURL(file);
 	}
 	
 	function addUploadList(file) {
@@ -74,8 +99,8 @@ function dropFile(dropAreaId, fileListId) {
 		let fileDOM = document.createElement("div");
 		fileDOM.className = "file";
 		fileDOM.innerHTML = `
-			<div class="thumbnail">
-				<img src="https://img.icons8.com/pastel-glyph/2x/image-file.png" alt="파일타입 이미지" class="image">
+			<div class="thumbnail" data-bs-toggle="modal" data-bs-target="#thumbnail">
+				<img src="" alt="파일타입 이미지" class="image pointer">
 			</div>
 			<div class="details">
 				<header class="header">
@@ -96,6 +121,11 @@ function dropFile(dropAreaId, fileListId) {
 				</svg>
 			</div>
 	    `;
+		readerFile(file,function(src) {
+	        const image = fileDOM.querySelector('.image');
+	        image.src = src;
+		});
+	    
 	    addUploadList(file);
 		return fileDOM;
 	}
@@ -110,95 +140,34 @@ function dropFile(dropAreaId, fileListId) {
 	};
 }
 
-function initView(gridAreaId,gridId,pickerId) {
-	$("#"+gridAreaId).append(`<div id="${gridId}" class="col-sm-12"></div>`);
-	
-	// 그리드 생성
-	grid = new tui.Grid({
-		el: document.getElementById(gridId)
-		, scrollX: false
-		, scrollY: true
-		, bodyHeight: 250
-		, columns: [
-			{
-				header: '관리번호'
-				, name: 'site_idx'
-				, width: '70'
-				, align: 'center'
-			},
-			{
-				header: '회사명'
-				, name: 'site_company_name'
-				, align: 'center'
-			},
-			{
-				header: '선택'
-				, name: 'select'
-				, align: 'center'
-				, width: 55
-				, formatter: function() {
-					let addBtn = `<button type='button' class='btn btn-sm btn-outline-secondary'>선택</button>`;
-					return addBtn;
-				}
-			},
-		],
-	});
-	grid.on("click", function (e) {
-		let rowKey = e.rowKey;
-		if(e.columnName === 'select') {
-			// raw data 와 rowKey 비교 구문
-			for(let row of e.instance.store.viewport.rows) {
-				if(row.rowKey === rowKey) {
-					$("#site_idx").val(row.valueMap.site_idx.value);
-					$("#company").val(row.valueMap.site_company_name.value);
-					grid.clear();
-					$("#searchBox").val('');
-					$("#cpSearch").modal('hide');
-				}
-			}
-		} 
-	});
-
-	$('#'+pickerId).datepicker({
+function initView(pickersId,pickereId) {
+	$(`#${pickersId}`).datepicker({
 	    format: 'yyyy-mm-dd',
 	    autoclose: true,
 		todayHighlight: true,
 	    clearBtn: true,
 	    disableTouchKeyboard: true,
 	    language: 'ko'
+	}).on('changeDate',function(e) {
+		startDate = dateFormat(e.date);
+		$(`#${pickereId}`).datepicker('setStartDate', e.date);
 	});
 	
+	// 종료일 datepicker 생성
+	$(`#${pickereId}`).datepicker({
+	    format: 'yyyy-mm-dd',
+	    autoclose: true,
+	    todayHighlight: true,
+	    clearBtn: true,
+	    disableTouchKeyboard: true,
+	    language: 'ko'
+	}).on('changeDate',function(e) {
+		endDate = dateFormat(e.date);
+		$(`#${pickersId}`).datepicker('setEndDate', e.date);
+	});
 }
 
 function initfunc() {
-	// 그리드 조회
-	function getGrid() {
-		let keyword = $("#searchBox").val();
-		
-		fetch('/api/siteManagements/companyNameSearch', {
-			method: 'POST',
-			headers: { 'Content-Type': 'application/json; charset=UTF-8' },
-			body: JSON.stringify({
-				searchKeyword:keyword
-			})
-		})
-		.then(response => response.json())
-		.then(siteNameList => {
-			grid.resetData(siteNameList);
-			grid.refreshLayout();
-		})
-		.catch(error => console.error(error));
-	};
-
-	// 검색
-	$("#selectGrid").on("click", getGrid);
-	
-	// 검색 엔터기능
-    $("#searchBox").on("keydown", function(e){
-        if(e.keyCode === 13) {
-        	getGrid();
-        }
-    });
     
     // 초기화
 	$("#resetBtn").on("click",function() {
@@ -213,10 +182,10 @@ function initfunc() {
     // 등록
 	$("#submitBtn").on("click",function() {
 		let formData = new FormData();
-		let request = {}
+		let site = {}
 		
 		for (const pair of new FormData($("#form")[0]).entries()) {
-			if(pair[0] != 'file') request[pair[0]] = pair[1];
+			if(pair[0] != 'file') site[pair[0]] = pair[1];
 		}
 		
 		for (let i=0; i < uploadList.length; i++) {
@@ -225,9 +194,9 @@ function initfunc() {
 		
 		
 		formData.append("deleteList", new Blob([JSON.stringify(deleteList)],{type: "application/json"}));
-		formData.append("request", new Blob([JSON.stringify(request)],{type: "application/json"}));
+		formData.append("site", new Blob([JSON.stringify(site)],{type: "application/json"}));
 		
-		fetch(`/api/requirements/request`, {
+		fetch(`/api/managements/update`, {
 			method: 'PUT',
 			headers: {},
 			body: formData

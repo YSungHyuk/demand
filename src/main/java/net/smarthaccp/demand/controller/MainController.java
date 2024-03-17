@@ -8,9 +8,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 
 @Controller
-public class HomeController {
+public class MainController {
 	
-	private static final Logger logger = LoggerFactory.getLogger(HomeController.class);
+	private static final Logger logger = LoggerFactory.getLogger(MainController.class);
 	
 	@RequestMapping(value = "/", method = RequestMethod.GET)
 	public String home() {
@@ -19,17 +19,17 @@ public class HomeController {
 	
 	@RequestMapping(value="/close", method = RequestMethod.GET)
 	public String close() {
-		return "close";
+		return "etc/close";
 	}
 	
 	@RequestMapping(value="/requirements")
 	public String requirements() {
-		return "requirements/main";
+		return "requirements/request_main";
 	}
 	
 	@RequestMapping(value="/managements")
 	public String siteManagements() {
-		return "managements/main";
+		return "managements/site_main";
 	}
 	
 }

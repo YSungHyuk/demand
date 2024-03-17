@@ -20,7 +20,7 @@
 	<nav>
 		<jsp:include page="../inc/nav.jsp" />
 	</nav>
-	<script src="${pageContext.request.contextPath }/resources/js/requirements/main.js"></script>
+	<script src="${pageContext.request.contextPath }/resources/js/requirements/request_main.js"></script>
 	<div class="container">
 		<div class="row">
 			<div class="col-sm-12 d-none d-lg-block">
@@ -71,11 +71,21 @@
 				</button>
 			</div>
 		</div>
-		
 		<div class="row justify-content-center">
 			<div class="col-1 text-center" id="pp"></div>
 			<div id="pageList" class="col-md-1 text-center"></div>
 			<div class="col-1 text-center" id="np"></div>
+		</div>
+	</div>
+	<div class="modal fade" id="viewer" data-bs-keyboard="false" tabindex="-1" aria-labelledby="viewer" aria-hidden="true">
+		<div class="modal-dialog modal-xl modal-dialog-centered">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="viewer">상세정보</h5>
+				</div>
+				<div class="modal-body">
+				</div>
+			</div>
 		</div>
 	</div>
 </body>

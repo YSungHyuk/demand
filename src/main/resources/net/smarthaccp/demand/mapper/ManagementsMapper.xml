@@ -5,18 +5,188 @@
 		SELECT
 			site_idx
 			, seq_idx
-			, site_company_name
+			, site_name
 			, state
 		FROM
 			SITE_MASTER_TB
 		WHERE	
 		<choose>
 			<when test="!searchKeyword.equals('')">
-				site_company_name like concat('%',#{searchKeyword},'%')
+				site_name like concat('%',#{searchKeyword},'%')
 			</when>
 			<otherwise>
 				1=1
 			</otherwise>
 		</choose>
 	</select>
+	<insert id="insertSiteMaster" parameterType="SiteVO">
+		INSERT INTO
+			SITE_MASTER_TB(site_idx,site_name,site_ceo,business_level,business_start_date,business_end_date,file_idx)
+			values(
+				#{site_idx}
+				, #{site_name}
+				, #{site_ceo}
+				, #{business_level}
+				, #{business_start_date}
+				, #{business_end_date}
+				, #{file_idx}
+			)
+	</insert>
+	<insert id="insertSiteDetail" parameterType="SiteVO">
+		INSERT INTO
+			SITE_DETAIL_TB(site_idx,site_url,site_port)
+			values(
+				#{site_idx}
+				, #{site_url}
+				, #{site_port}
+			)
+	</insert>
+	<select id="getSiteList" parameterType="SearchInfoVO" resultType="SiteVO">
+		SELECT
+			SM.site_idx
+			, seq_idx
+			, site_name
+			, site_ceo
+			, business_level
+			, CONCAT(
+				CASE
+					site_port
+					WHEN '80' THEN 'http'
+					WHEN '8080' THEN 'http'
+					ELSE 'https'
+				END
+			,'://',site_url) AS site_url 
+			, state
+		FROM
+			SITE_MASTER_TB SM JOIN SITE_DETAIL_TB SD 
+			ON SM.SITE_IDX = SD.SITE_IDX
+		WHERE
+			SM.state != '삭제'
+		<choose>
+			<when test="searchType != null and !searchKeyword.equals('')">
+				<choose>
+					<when test="searchType.equals('any')">
+						AND SM.site_name like concat('%',#{searchKeyword},'%')
+						OR site_ceo like concat('%',#{searchKeyword},'%')
+						OR business_level like concat('%',#{searchKeyword},'%')
+						OR state like concat('%',#{searchKeyword},'%')
+					</when>
+					<when test="searchType.equals('site_name')">
+						AND site_name like concat('%',#{searchKeyword},'%')
+					</when>
+					<when test="searchType.equals('site_ceo')">
+						AND site_ceo like concat('%',#{searchKeyword},'%')
+					</when>
+					<when test="searchType.equals('business_level')">
+						AND business_level like concat('%',#{searchKeyword},'%')
+					</when>
+					<when test="searchType.equals('state')">
+						AND state like concat('%',#{searchKeyword},'%')
+					</when>
+				</choose>
+			</when>
+			<otherwise>
+				AND 1=1
+			</otherwise>
+		</choose>
+		<choose>
+			<when test="startDate != null and endDate != null">
+				<![CDATA[
+					AND DATE(business_start_date) >= #{startDate}
+					AND DATE(business_end_date) <= #{endDate}
+				]]> 
+			</when>
+			<when test="endDate != null">
+				<![CDATA[
+					AND DATE(business_end_date) <= #{endDate}
+				]]>
+			</when>
+			<when test="startDate != null">
+				<![CDATA[
+					AND DATE(business_start_date) >= #{startDate}
+				]]>
+			</when>
+		</choose>
+		ORDER BY
+			seq_idx desc
+		<if test="startRow != null and listLimit != null">
+			limit
+				${startRow}
+				, ${listLimit}
+		</if>
+	</select>
+	<select id="selectSite" resultType="SiteVO" parameterType="String">
+		SELECT
+			SM.site_idx
+			, site_name
+			, site_ceo
+			, business_level
+			, file_idx
+			, site_url
+			, site_port
+			, DATE(business_start_date) as 'business_start_date'
+			, DATE(business_end_date) as 'business_end_date'
+			, SM.state
+		FROM
+			SITE_MASTER_TB SM LEFT JOIN SITE_DETAIL_TB SD
+			ON SM.site_idx = SD.site_idx
+		WHERE
+			SM.site_idx = #{site_idx}
+	</select>
+	<update id="updateSiteMaster" parameterType="SiteVO">
+		UPDATE
+			SITE_MASTER_TB
+	    <set>
+			<if test="site_name != null and site_name !=''">
+				site_name = #{site_name},	
+			</if>	    
+			<if test="site_ceo != null and site_ceo !=''">
+				site_ceo = #{site_ceo},	
+			</if>	    
+			<if test="business_level != null and business_level !=''">
+				business_level = #{business_level},	
+			</if>	    
+			<if test="business_start_date != null and business_start_date !=''">
+				business_start_date = #{business_start_date},	
+			</if>	    
+			<if test="business_end_date != null and business_end_date !=''">
+				business_end_date = #{business_end_date},	
+			</if>	        
+			<if test="file_idx !=''">
+				<choose>
+					<when test="file_idx == null">
+						file_idx = #{file_idx, jdbcType = VARCHAR},
+					</when>
+					<otherwise>
+						file_idx = #{file_idx},	
+					</otherwise>
+				</choose>
+			</if>
+	    </set>
+	    WHERE
+	    	site_idx = #{site_idx}
+	</update>
+	<update id="updateSiteDetail" parameterType="SiteVO">
+		UPDATE
+			SITE_DETAIL_TB
+	    <set>
+			<if test="site_url != null and site_url !=''">
+				site_url = #{site_url},	
+			</if>	    
+			<if test="site_port != null and site_port !=''">
+				site_port = #{site_port},	
+			</if>    
+	    </set>
+	    WHERE
+	    	site_idx = #{site_idx}
+	</update>
+	<update id="deleteSite" parameterType="String">
+		UPDATE
+			SITE_MASTER_TB
+		SET
+			state = '삭제'
+		WHERE
+			site_idx = #{site_idx}
+	</update>
+	
 </mapper>

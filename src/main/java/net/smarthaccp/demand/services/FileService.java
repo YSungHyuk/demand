@@ -79,6 +79,7 @@ public class FileService {
     			vo.setFile_idx(file_idx);
     			vo.setFile_name(file.getOriginalFilename());
     			vo.setFile_extension(FilenameUtils.getExtension(file_name));
+    			vo.setFile_type(file.getContentType().split("/")[0]);
     			vo.setFile_size(String.valueOf(file.getSize()));
     			vo.setSeq(seq);
     			vo.setFile_path(file_path);

@@ -3,13 +3,13 @@
 <html>
 <head>
 	<title>요구사항 등록</title>
-	<link rel="stylesheet" href="/resources/css/request.css">
+	<link rel="stylesheet" href="/resources/css/etc/file.css">
 </head>
 <body>
 	<header>
 		<jsp:include page="../inc/header.jsp" />
 	</header>
-	<script src="${pageContext.request.contextPath }/resources/js/requirements/insert.js"></script>
+	<script src="${pageContext.request.contextPath }/resources/js/requirements/request_insert.js"></script>
 	<form id="form" method="POST" enctype="multipart/form-data">
 		<div class="container">
 			<div class="row">
@@ -110,36 +110,42 @@
 			</div>
 		</div>
 	</form>
-<div class="modal fade" id="cpSearch" data-bs-keyboard="false" data-bs-backdrop="static" tabindex="-1" aria-labelledby="cpSearch" aria-hidden="true">
-	<div class="modal-dialog modal-dialog-centered">
-		<div class="modal-content">
-			<div class="modal-header">
-				<h5 class="modal-title" id="cpSearch">회사명 조회</h5>
-				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-			</div>
-			<div class="modal-body">
-				<div class="container">
-					<div class="row">
-						<div class="col">
-							<div class="input-group mb-3">
-								<input type="text" class="form-control" id="searchBox">
-								<button type="button" id="selectGrid" class="btn btn-outline-secondary">조회</button>
-								<span>
-									<i class="fa fa-search" aria-hidden="true"></i>
-								</span>
+	<div class="modal fade" id="cpSearch" data-bs-keyboard="false" data-bs-backdrop="static" tabindex="-1" aria-labelledby="cpSearch" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="cpSearch">회사명 조회</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body">
+					<div class="container">
+						<div class="row">
+							<div class="col">
+								<div class="input-group mb-3">
+									<input type="text" class="form-control" id="searchBox">
+									<button type="button" id="selectGrid" class="btn btn-outline-secondary">조회</button>
+									<span>
+										<i class="fa fa-search" aria-hidden="true"></i>
+									</span>
+								</div>
 							</div>
 						</div>
-					</div>
-					<div id="companyGrid" class="row">
+						<div id="companyGrid" class="row">
+						</div>
 					</div>
 				</div>
 			</div>
-<!-- 			<div class="modal-footer"> -->
-<!-- 				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button> -->
-<!-- 			</div> -->
 		</div>
 	</div>
-</div>
+	<div class="modal fade" id="thumbnail" data-bs-keyboard="false" tabindex="-1" aria-labelledby="thumbnail" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered">
+			<div class="modal-content">
+				<div class="modal-body">
+					<img id="modal-body-img">
+				</div>
+			</div>
+		</div>
+	</div>
 </body>
 </html>
 

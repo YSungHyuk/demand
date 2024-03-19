@@ -5,6 +5,7 @@
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 	<title>요구사항</title>
+	<link rel="stylesheet" href="/resources/css/etc/file.css">
 </head>
 <%-- 
 <style>
@@ -49,7 +50,6 @@
 		<div class="row">
 			<div id="grid-view" class="col-sm-12"></div>
 		</div>
-		
 		<div class="row justify-content-between">
 			<div class="col-sm-2"></div>
 			<div class="col-sm-6 col-10 text-center">
@@ -84,6 +84,57 @@
 					<h5 class="modal-title" id="viewer">상세정보</h5>
 				</div>
 				<div class="modal-body">
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="modal fade" id="handle" data-bs-keyboard="false" tabindex="-1" data-bs-backdrop="static" aria-labelledby="handle" aria-hidden="true">
+		<div class="modal-dialog modal-lg modal-dialog-centered">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="handle">처리</h5>
+				</div>
+				<div class="modal-body">
+					<form id="form">
+						<input type="hidden" name="req_idx">
+						<div class="container">
+							<div class="row">
+								<div class="col">
+									<div class="row mb-3">
+										<label class="col-sm-2 col-form-label" for="handler">작업자</label>
+										<div class="col-sm-10">
+											<input type="text" autocomplete="off" class="form-control" name="handler" id="handler" required>
+										</div>
+									</div>
+									<div class="row mb-3">
+										<label class="col-sm-2 col-form-label" for="handle_contents">작업내용</label>
+										<div class="col-sm-10">
+											<textarea class="form-control" autocomplete="off" name="handle_contents" id="handle_contents" rows="5"></textarea>
+										</div>
+									</div>
+									<div class="row mb-3">
+										<div class="col">
+											<div class="upload-box mt-5">
+												<div id="drop-file" class="drag-file">
+													<img src="https://img.icons8.com/pastel-glyph/2x/image-file.png" alt="파일 아이콘" class="image">
+													<p class="message">Drag files to upload</p>
+												</div>
+											</div>
+											<div id="files" class="files mb-3">
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+   							<div class="modal-footer">
+								<div class="btn-group" role="group">
+									<button type="button" id="submitBtn" class="btn btn-outline-secondary">등록</button>
+									<button type="button" id="resetBtn" class="btn btn-outline-secondary">초기화</button>
+									<button type="button" id="closeBtn" data-bs-dismiss="modal" class="btn btn-outline-secondary">닫기</button>
+								</div>
+							</div>
+						</div>
+					</form>
 				</div>
 			</div>
 		</div>

@@ -6,6 +6,8 @@ let startDate;
 let endDate;
 let pageNum = 1;
 const reg = /\d{4}-\d{2}-\d{2}/g;
+let uploadList = [];
+let fileidx = 0;
 
 $(function() {
 	// 시작일 datepicker 생성
@@ -152,6 +154,8 @@ $(function() {
 		}
 		
 	});
+
+	dropFile("drop-file","files");
 
 	// 그리드용 데이터 조회
 	const getGrid = () => {
@@ -303,7 +307,7 @@ const viewer = item => {
 	let files = item.files;
 	let path = window.location.pathname.substring(0, window.location.pathname.indexOf("/",2));
 	
-	$(".modal-body").empty();
+	$("#viewer").find(".modal-body").empty();
 	let body = `
 		<div class="container">
 		<div class="row" id="modalRow">
@@ -385,15 +389,14 @@ const viewer = item => {
 			<div class="row text-center">
 				<div class="col">
 					<div class="btn-group" role="group">
-						<button type="button" id="submitBtn" class="btn btn-outline-secondary">접수</button>
-						<button type="button" id="closeBtn" class="btn btn-outline-secondary">닫기</button>
+						<button type="button" data-bs-toggle="modal" id="handleBtn" data-bs-target="#handle" value=${request.req_idx} class="btn btn-outline-secondary">처리</button>
 					</div>
 				</div>
 			</div>
 		</div>
 	</div>
 	`;
-	$(".modal-body").append(body);
+	$("#viewer").find(".modal-body").append(body);
 	
 	$("input[name=priority]").each(function() {
 		if($(this).val() == request.priority) $(this).attr('checked','checked');
@@ -403,68 +406,218 @@ const viewer = item => {
 		if($(this).val() == request.type) $(this).attr('checked','checked');
 	})
 	
-	if(files === undefined) $("#modalCol").removeClass('col-lg-6');
-	
 	$("#company").val(request.site_name);
 	$("#requester").val(request.requester);
 	$("#request_date").val(request.request_date);
 	$("#title").val(request.title);
 	$("#content").val(request.content);
 	
-	body = `
-		<div class="col-12 col-lg-6">
-			<div id="Carousel" class="carousel slide" data-bs-ride="carousel">
-				<div class="carousel-indicators">
+	if(files === undefined || request.file_idx === null) {
+		$("#modalCol").removeClass('col-lg-6');
+	} else {
+		body = `
+			<div class="col-12 col-lg-6">
+				<div id="Carousel" class="carousel slide" data-bs-ride="carousel">
+					<div class="carousel-indicators">
+					</div>
+					<div class="carousel-inner">
+					</div>
+					<button class="carousel-control-prev" type="button"
+						data-bs-target="#Carousel" data-bs-slide="prev">
+						<span class="carousel-control-prev-icon" aria-hidden="true"></span>
+						<span class="visually-hidden">Previous</span>
+					</button>
+					<button class="carousel-control-next" type="button"
+						data-bs-target="#Carousel" data-bs-slide="next">
+						<span class="carousel-control-next-icon" aria-hidden="true"></span>
+						<span class="visually-hidden">Next</span>
+					</button>
 				</div>
-				<div class="carousel-inner">
+				<div id="files" class="files mb-3">
 				</div>
-				<button class="carousel-control-prev" type="button"
-					data-bs-target="#Carousel" data-bs-slide="prev">
-					<span class="carousel-control-prev-icon" aria-hidden="true"></span>
-					<span class="visually-hidden">Previous</span>
-				</button>
-				<button class="carousel-control-next" type="button"
-					data-bs-target="#Carousel" data-bs-slide="next">
-					<span class="carousel-control-next-icon" aria-hidden="true"></span>
-					<span class="visually-hidden">Next</span>
-				</button>
 			</div>
-		</div>
-	`;
-	
-	$("#modalRow").append(body);
-	
-	for(let file of files) {
-		console.log(JSON.stringify(file));
-		let indicators = `
-			<button type="button" data-bs-target="#Carousel" data-bs-slide-to="${file.seq }" class="active" aria-current="true" aria-label="Slide ${file.seq }"></button>
 		`;
-		$(".carousel-indicators").append(indicators);
+		$("#modalRow").append(body);
 		
-		let inner = `
-		    <div class="carousel-item ${file.seq === 1 ? 'active' : ''}">
-	        	<img src="${path}${file.file_path}/${file.uuid}_${file.file_name}" class="d-block modal-carousel" alt="첨부이미지${file.seq}">
-		    </div>
-		`;
-		$(".carousel-inner").append(inner);
+		for(let data of files) {
+			let fileSrc = path+data.file_path+"/"+data.uuid+"_"+data.file_name;
+			let noImageSrc = "https://img.icons8.com/pastel-glyph/2x/image-file.png";
+			
+			if(data.file_type === 'image') {
+				let indicators = `
+					<button type="button" data-bs-target="#Carousel" data-bs-slide-to="${data.seq }" class="active" aria-current="true" aria-label="Slide ${data.seq }"></button>
+				`;
+				$(".carousel-indicators").append(indicators);
+				
+				let inner = `
+				    <div class="carousel-item ${data.seq === 1 ? 'active' : ''}">
+			        	<img src="${fileSrc}" class="d-block modal-carousel" alt="첨부이미지${data.seq}">
+				    </div>
+				`;
+				$(".carousel-inner").append(inner);
+			}
+			
+			let file = `
+				<div class="file">
+					<div class="thumbnail">
+						<img src="${data.file_type === 'image' ? fileSrc : noImageSrc}" alt="${data.file_name}" class="image">
+					</div>
+					<div class="details">
+						<header class="header">
+							<span class="name downloadFile pointer">
+								<input type="hidden" value="${fileSrc}" id="${data.file_name }">
+								${data.file_name}
+							</span>
+							<span class="size">${sizeFormat(data.file_size)}</span>
+						</header>
+					</div>				
+				</div>
+			`
+			$("#viewer").find(".files").append(file);
+		}
 	}
+	
+	
+	// 파일 다운로드 기능,, 아 코드 언제 다수정하냐...
+	$(".downloadFile").on("click",function() {
+		  const a = document.createElement("a")
+		  const name = $(this).children('input[type=hidden]').attr('id');
+		  const source = $(this).children('input[type=hidden').val();
+		  a.href = source;
+		  a.setAttribute('download',name);
+		  a.click();
+		  a.remove();
+	});
+	// 처리 버튼 클릭
+	$("#handleBtn").on("click",function() {
+		$("#viewer").modal("hide");
+		$("input[type=hidden][name=req_idx]").val($(this).val());
+	})
+	
 }
 
-// post 방식으로 새창열기
-const postOpen = (verb, url, data, target) => {
-    let form = document.createElement("form");
-    form.action = location.origin + url;
-    form.verb = verb;
-    form.target = target || "_self";
-    if (data) {
-    	for (let key in data) {
-	        let input = document.createElement("textarea");
-	        input.name = key;
-	        input.value = typeof data[key] === "object" ? JSON.stringify(data[key]) : data[key];
-	        form.appendChild(input);
-    	}
-    }
-    form.style.display = 'none';
-    document.body.appendChild(form);
-    form.submit();
+// file drag & drop 언젠가 이놈도 수정해서 common.js으로 넣기
+function dropFile(dropAreaId, fileListId) {
+	let dropArea = document.getElementById(dropAreaId);
+	let fileList = document.getElementById(fileListId);
+
+	function preventDefaults(e) {
+		e.preventDefault();
+		e.stopPropagation();
+	}
+
+	function highlight(e) {
+		preventDefaults(e);
+		dropArea.classList.add("highlight");
+	}
+
+	function unhighlight(e) {
+		preventDefaults(e);
+		dropArea.classList.remove("highlight");
+	}
+
+	function handleDrop(e) {
+		unhighlight(e);
+		let dt = e.dataTransfer;
+		let files = dt.files;
+		
+		handleFiles(files);
+
+		const fileList = document.getElementById(fileListId);
+		if (fileList) {
+			fileList.scrollTo({ top: fileList.scrollHeight });
+		}
+		
+		deleteFile();
+	}
+
+	function handleFiles(files) {
+		files = [...files];
+		files.forEach(previewFile);
+	}
+
+	function previewFile(file) {
+		fileList.appendChild(renderFile(file));
+		imageModal();
+	}
+	
+	function imageModal() {
+		$(".image").on("click",function() {
+			$("#modal-body-img").attr('src',$(this).attr('src'));		
+		})
+	}	
+	
+	function readerFile(file, callback) {
+	    let reader = new FileReader();
+	    
+	    reader.onload = function(e) {
+	        let src;
+	        if(file.type.split('/')[0] === 'image') {
+	            src = e.target.result;
+	        } else {
+	            src = "https://img.icons8.com/pastel-glyph/2x/image-file.png";
+	        }
+	        callback(src);
+	    };
+	    
+	    reader.readAsDataURL(file);
+	}
+	
+	function addUploadList(file) {
+		uploadList[fileidx] = file;
+		fileidx++;
+	}
+	
+	function deleteFile() {
+		$(".fileDelete").on("click",function() {
+			let idx = $(this).attr('id').split('_')[1];
+			delete uploadList[idx];
+			$(this).parent().remove();
+		})
+	}
+	
+
+	function renderFile(file) {
+		let fileDOM = document.createElement("div");
+		fileDOM.className = "file";
+		fileDOM.innerHTML = `
+			<div class="thumbnail" data-bs-toggle="modal" data-bs-target="#thumbnail">
+				<img src="" alt="파일타입 이미지" class="image pointer">
+			</div>
+			<div class="details">
+				<header class="header">
+					<span class="name">${file.name}</span>
+					<span class="size">${sizeFormat(file.size)}</span>
+				</header>
+				<div class="progress">
+					<div class="bar"></div>
+				</div>
+				<div class="status">
+					<span class="percent">100% done</span>
+					<span class="speed">90KB/sec</span>
+				</div>
+			</div>
+			<div class="fileDelete deleteHover" id="delete_${fileidx}">
+				<svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-x-lg pointer" viewBox="0 0 16 16">
+					<path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/>
+				</svg>
+			</div>
+	    `;
+		readerFile(file,function(src) {
+	        const image = fileDOM.querySelector('.image');
+	        image.src = src;
+		});
+	    
+	    addUploadList(file);
+		return fileDOM;
+	}
+
+	dropArea.addEventListener("dragenter", highlight, false);
+	dropArea.addEventListener("dragover", highlight, false);
+	dropArea.addEventListener("dragleave", unhighlight, false);
+	dropArea.addEventListener("drop", handleDrop, false);
+
+	return {
+		handleFiles
+	};
 }

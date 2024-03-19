@@ -1,3 +1,4 @@
+<%@page import="java.io.File"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
@@ -116,7 +117,11 @@
 												<input type="hidden" value="${pageContext.request.contextPath}${file.file_path}/${file.uuid}_${file.file_name}" id="${file.file_name }">
 												${file.file_name}
 											</span>
-											<span class="size">${file.file_size }</span>
+											<span class="size">
+												<script>
+													document.write(sizeFormat(${file.file_size}));
+												</script>
+											</span>
 										</header>
 									</div>
 									<div class="oldFileDelete deleteHover">

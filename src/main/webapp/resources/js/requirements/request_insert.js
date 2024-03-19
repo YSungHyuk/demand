@@ -103,7 +103,7 @@ function dropFile(dropAreaId, fileListId) {
 			<div class="details">
 				<header class="header">
 					<span class="name">${file.name}</span>
-					<span class="size">${file.size}</span>
+					<span class="size">${sizeFormat(file.size)}</span>
 				</header>
 				<div class="progress">
 					<div class="bar"></div>

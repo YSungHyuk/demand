@@ -281,22 +281,3 @@ const pageLink = url => {
 	link.click();
 	document.body.removeChild(link);
 }
-
-// post 방식으로 새창열기
-const postOpen = (verb, url, data, target) => {
-    let form = document.createElement("form");
-    form.action = location.origin + url;
-    form.verb = verb;
-    form.target = target || "_self";
-    if (data) {
-    	for (let key in data) {
-	        let input = document.createElement("textarea");
-	        input.name = key;
-	        input.value = typeof data[key] === "object" ? JSON.stringify(data[key]) : data[key];
-	        form.appendChild(input);
-    	}
-    }
-    form.style.display = 'none';
-    document.body.appendChild(form);
-    form.submit();
-}

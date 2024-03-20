@@ -256,6 +256,27 @@ $(function() {
 		window.open(url,target,option);
 	});
 	
+	// 처리 버튼 클릭
+	$("#handleBtn").on("click",function() {
+		$("#viewer").modal("hide");
+		
+		let idx = $(this).val();
+		
+		fetch(`/api/handler/select/${idx}`)
+		.then(response => response.json())
+		.then(result => {
+			viewer(result);
+		})
+		.catch(error => console.error(error));
+		
+		
+		if(handle_idx === undefined) {
+			console.log("없음")
+		} else {
+			console.log("있음")
+		}
+	})
+	
 	getGrid();
 });
 
@@ -309,7 +330,7 @@ const viewer = item => {
 	
 	$("#viewer").find(".modal-body").empty();
 	let body = `
-		<div class="container">
+	<div class="container">
 		<div class="row" id="modalRow">
 			<div class="col-12 col-lg-6" id="modalCol">
 				<div class="row mb-3 mt-3 align-items-center">
@@ -385,15 +406,6 @@ const viewer = item => {
 				</div>
 			</div>
 		</div>
-		<div class="container">
-			<div class="row text-center">
-				<div class="col">
-					<div class="btn-group" role="group">
-						<button type="button" data-bs-toggle="modal" id="handleBtn" data-bs-target="#handle" value=${request.req_idx} class="btn btn-outline-secondary">처리</button>
-					</div>
-				</div>
-			</div>
-		</div>
 	</div>
 	`;
 	$("#viewer").find(".modal-body").append(body);
@@ -411,6 +423,12 @@ const viewer = item => {
 	$("#request_date").val(request.request_date);
 	$("#title").val(request.title);
 	$("#content").val(request.content);
+	$("#handleBtn").val(request.req_idx);
+	if(request.handle_idx !== null) {
+		$("#handleBtn").text("처리내용");
+	} else {
+		$("#handleBtn").text("처리");
+	}
 	
 	if(files === undefined || request.file_idx === null) {
 		$("#modalCol").removeClass('col-lg-6');
@@ -488,12 +506,6 @@ const viewer = item => {
 		  a.click();
 		  a.remove();
 	});
-	// 처리 버튼 클릭
-	$("#handleBtn").on("click",function() {
-		$("#viewer").modal("hide");
-		$("input[type=hidden][name=req_idx]").val($(this).val());
-	})
-	
 }
 
 // file drag & drop 언젠가 이놈도 수정해서 common.js으로 넣기

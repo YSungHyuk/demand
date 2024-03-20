@@ -85,6 +85,13 @@
 				</div>
 				<div class="modal-body">
 				</div>
+				<div class="modal-footer">
+					<div class="btn-group" role="group">
+						<button type="button" data-bs-toggle="modal" id="handleBtn" data-bs-target="#handle" class="btn btn-outline-secondary">
+							<span></span>
+						</button>
+					</div>
+				</div>
 			</div>
 		</div>
 	</div>
@@ -92,7 +99,7 @@
 		<div class="modal-dialog modal-lg modal-dialog-centered">
 			<div class="modal-content">
 				<div class="modal-header">
-					<h5 class="modal-title" id="handle">처리</h5>
+					<h5 class="modal-title" id="handle_idx">처리</h5>
 				</div>
 				<div class="modal-body">
 					<form id="form">
@@ -128,7 +135,7 @@
 							</div>
    							<div class="modal-footer">
 								<div class="btn-group" role="group">
-									<button type="button" id="submitBtn" class="btn btn-outline-secondary">등록</button>
+									<button type="button" id="handleInsertBtn" class="btn btn-outline-secondary">등록</button>
 									<button type="button" id="resetBtn" class="btn btn-outline-secondary">초기화</button>
 									<button type="button" id="closeBtn" data-bs-dismiss="modal" class="btn btn-outline-secondary">닫기</button>
 								</div>

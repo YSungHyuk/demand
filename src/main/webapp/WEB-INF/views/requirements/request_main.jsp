@@ -87,22 +87,21 @@
 				</div>
 				<div class="modal-footer">
 					<div class="btn-group" role="group">
-						<button type="button" data-bs-toggle="modal" id="handleBtn" data-bs-target="#handle" class="btn btn-outline-secondary">
-							<span></span>
-						</button>
+						<button type="button" data-bs-toggle="modal" id="handleInsertBtn" data-bs-target="#handleInsert" class="btn btn-outline-secondary">처리</button>
+						<button type="button" data-bs-toggle="modal" id="handleViewBtn" data-bs-target="#handleView" class="btn btn-outline-secondary">처리내용</button>
 					</div>
 				</div>
 			</div>
 		</div>
 	</div>
-	<div class="modal fade" id="handle" data-bs-keyboard="false" tabindex="-1" data-bs-backdrop="static" aria-labelledby="handle" aria-hidden="true">
+	<div class="modal fade" id="handleInsert" data-bs-keyboard="false" tabindex="-1" data-bs-backdrop="static" aria-labelledby="handleInsert" aria-hidden="true">
 		<div class="modal-dialog modal-lg modal-dialog-centered">
 			<div class="modal-content">
 				<div class="modal-header">
-					<h5 class="modal-title" id="handle_idx">처리</h5>
+					<h5 class="modal-title" id="handleInsert">처리</h5>
 				</div>
 				<div class="modal-body">
-					<form id="form">
+					<form id="insertform">
 						<input type="hidden" name="req_idx">
 						<div class="container">
 							<div class="row">
@@ -110,7 +109,7 @@
 									<div class="row mb-3">
 										<label class="col-sm-2 col-form-label" for="handler">작업자</label>
 										<div class="col-sm-10">
-											<input type="text" autocomplete="off" class="form-control" name="handler" id="handler" required>
+											<input type="text" autocomplete="off" class="form-control" name="handler" id="handler">
 										</div>
 									</div>
 									<div class="row mb-3">
@@ -135,13 +134,29 @@
 							</div>
    							<div class="modal-footer">
 								<div class="btn-group" role="group">
-									<button type="button" id="handleInsertBtn" class="btn btn-outline-secondary">등록</button>
+									<button type="button" id="insertSubmit" class="btn btn-outline-secondary">등록</button>
 									<button type="button" id="resetBtn" class="btn btn-outline-secondary">초기화</button>
 									<button type="button" id="closeBtn" data-bs-dismiss="modal" class="btn btn-outline-secondary">닫기</button>
 								</div>
 							</div>
 						</div>
 					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="modal fade" id="handleView" data-bs-keyboard="false" tabindex="-1" aria-labelledby="handleView" aria-hidden="true">
+		<div class="modal-dialog modal-xl modal-dialog-centered">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="handleView">처리내용</h5>
+				</div>
+				<div class="modal-body">
+				</div>
+				<div class="modal-footer">
+					<div class="btn-group" role="group">
+						<button type="button" id="closeBtn" data-bs-dismiss="modal" class="btn btn-outline-secondary">닫기</button>
+					</div>
 				</div>
 			</div>
 		</div>

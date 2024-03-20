@@ -128,7 +128,7 @@
 	</update>
 	<select id="selectRequest" resultType="RequestVO" parameterType="String">
 		SELECT
-			req_idx
+			RD.req_idx
 			, type
 			, title
 			, content
@@ -138,13 +138,15 @@
 			, requester
 			, DATE(request_date) as request_date
 			, RD.state
+			, handle_idx
 			, priority
 			, DATE(RD.create_date) as create_date
 		FROM
-			REQ_DOC_TB RD LEFT JOIN SITE_MASTER_TB SM
+			REQ_DOC_TB RD LEFT JOIN REQ_HANDLE_TB RH
+			ON RD.req_idx = RH.req_idx LEFT JOIN SITE_MASTER_TB SM
 			ON RD.site_idx = SM.site_idx
 		WHERE
-			req_idx = #{req_idx}
+			RD.req_idx = #{req_idx}
 	</select>
 	<update id="deleteRequest" parameterType="String">
 		UPDATE

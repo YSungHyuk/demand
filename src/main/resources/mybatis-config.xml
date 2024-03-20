@@ -10,5 +10,6 @@
 		<typeAlias type="net.smarthaccp.demand.vo.FileVO" alias="FileVO"/>
 		<typeAlias type="net.smarthaccp.demand.vo.KeyVO" alias="KeyVO"/>
 		<typeAlias type="net.smarthaccp.demand.vo.SiteVO" alias="SiteVO"/>
+		<typeAlias type="net.smarthaccp.demand.vo.HandlerVO" alias="HandlerVO"/>
 	</typeAliases>
 </configuration>

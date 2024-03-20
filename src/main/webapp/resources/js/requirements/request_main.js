@@ -10,31 +10,7 @@ let uploadList = [];
 let fileidx = 0;
 
 $(function() {
-	// 시작일 datepicker 생성
-	$('#StartDate').datepicker({
-	    format: 'yyyy-mm-dd',
-	    autoclose: true,
-		todayHighlight: true,
-	    clearBtn: true,
-	    disableTouchKeyboard: true,
-	    language: 'ko'
-	}).on('changeDate',function(e) {
-		startDate = dateFormat(e.date);
-		$("#EndDate").datepicker('setStartDate', e.date);
-	});
-	
-	// 종료일 datepicker 생성
-	$('#EndDate').datepicker({
-	    format: 'yyyy-mm-dd',
-	    autoclose: true,
-	    todayHighlight: true,
-	    clearBtn: true,
-	    disableTouchKeyboard: true,
-	    language: 'ko'
-	}).on('changeDate',function(e) {
-		endDate = dateFormat(e.date);
-		$("#StartDate").datepicker('setEndDate', e.date);
-	});
+	dateRangePicker('StartDate','EndDate')
 	
 	// 그리드 생성
 	const grid = new tui.Grid({
@@ -257,25 +233,55 @@ $(function() {
 	});
 	
 	// 처리 버튼 클릭
-	$("#handleBtn").on("click",function() {
+	$("#handleInsertBtn").on("click",function() {
 		$("#viewer").modal("hide");
-		
+		$("#handleInsert").find("input[name=req_idx]").val($(this).val());
+	})
+	
+	// 처리내용 버튼 클릭
+	$("#handleViewBtn").on("click",function() {
+		$("#viewer").modal("hide");
 		let idx = $(this).val();
 		
 		fetch(`/api/handler/select/${idx}`)
 		.then(response => response.json())
 		.then(result => {
-			viewer(result);
+			viewer2(result);
 		})
 		.catch(error => console.error(error));
-		
-		
-		if(handle_idx === undefined) {
-			console.log("없음")
-		} else {
-			console.log("있음")
-		}
 	})
+	
+    // 등록
+	$("#insertSubmit").on("click",function() {
+		let formData = new FormData();
+		let handle = {}
+		
+		for (const pair of new FormData($("#insertform")[0]).entries()) {
+			if(pair[0] != 'file') handle[pair[0]] = pair[1];
+		}
+		
+		for (let i=0; i < uploadList.length; i++) {
+			if(uploadList[i] !== undefined) formData.append("files",uploadList[i]);  
+		}
+		
+		formData.append("handle", new Blob([JSON.stringify(handle)],{type: "application/json"}));
+		
+		fetch('/api/handler/insert', {
+			method: 'POST',
+			headers: {},
+			body: formData
+		})
+		.then(response => {
+			if(response.status === 200) {
+				location.reload(true);
+			}
+		})
+		.catch(error => console.error(error));
+	});
+	
+	
+	
+	
 	
 	getGrid();
 });
@@ -320,10 +326,20 @@ const itemSelect = idx => {
 		viewer(result);
 	})
 	.catch(error => console.error(error));
-}
+};
 
+const handleReset = () => {
+	uploadList = [];
+	fileidx = 0;
+	$("#handler").val('');
+	$("#handle_contents").val('');
+	$(".files").each(function() {
+		$(this).empty();
+	})  
+};
+
+// 이놈도 줄여서...
 const viewer = item => {
-	
 	let request = item.request;
 	let files = item.files;
 	let path = window.location.pathname.substring(0, window.location.pathname.indexOf("/",2));
@@ -331,8 +347,8 @@ const viewer = item => {
 	$("#viewer").find(".modal-body").empty();
 	let body = `
 	<div class="container">
-		<div class="row" id="modalRow">
-			<div class="col-12 col-lg-6" id="modalCol">
+		<div class="row modalRow">
+			<div class="col-12 col-lg-6 modalCol">
 				<div class="row mb-3 mt-3 align-items-center">
 					<div class="col-6">
 						<div class="container">
@@ -423,15 +439,19 @@ const viewer = item => {
 	$("#request_date").val(request.request_date);
 	$("#title").val(request.title);
 	$("#content").val(request.content);
-	$("#handleBtn").val(request.req_idx);
+	
 	if(request.handle_idx !== null) {
-		$("#handleBtn").text("처리내용");
+		$("#handleViewBtn").val(request.handle_idx);
+		$("#handleViewBtn").removeClass('d-none');
+		$("#handleInsertBtn").addClass('d-none');
 	} else {
-		$("#handleBtn").text("처리");
+		$("#handleInsertBtn").val(request.req_idx);
+		$("#handleViewBtn").addClass('d-none');
+		$("#handleInsertBtn").removeClass('d-none');
 	}
 	
 	if(files === undefined || request.file_idx === null) {
-		$("#modalCol").removeClass('col-lg-6');
+		$("#viewer").find(".modalCol").removeClass('col-lg-6');
 	} else {
 		body = `
 			<div class="col-12 col-lg-6">
@@ -455,7 +475,112 @@ const viewer = item => {
 				</div>
 			</div>
 		`;
-		$("#modalRow").append(body);
+		$("#viewer").find(".modalRow").append(body);
+		
+		let isActive = true;
+		for(let data of files) {
+			let fileSrc = path+data.file_path+"/"+data.uuid+"_"+data.file_name;
+			let noImageSrc = "https://img.icons8.com/pastel-glyph/2x/image-file.png";
+			
+			if(data.file_type === 'image') {
+				let indicators = `
+					<button type="button" data-bs-target="#Carousel" data-bs-slide-to="${data.seq }" class="active" aria-current="true" aria-label="Slide ${data.seq }"></button>
+				`;
+				$(".carousel-indicators").append(indicators);
+				
+				let inner = `
+				    <div class="carousel-item ${isActive ? 'active' : ''}">
+			        	<img src="${fileSrc}" class="d-block modal-carousel" alt="첨부이미지${data.seq}">
+				    </div>
+				`;
+				$(".carousel-inner").append(inner);
+			}
+			
+			isActive = false;
+			
+			let file = `
+				<div class="file">
+					<div class="thumbnail">
+						<img src="${data.file_type === 'image' ? fileSrc : noImageSrc}" alt="${data.file_name}" class="image">
+					</div>
+					<div class="details">
+						<header class="header">
+							<span class="name downloadFile pointer">
+								<input type="hidden" value="${fileSrc}" id="${data.file_name }">
+								${data.file_name}
+							</span>
+							<span class="size">${sizeFormat(data.file_size)}</span>
+						</header>
+					</div>				
+				</div>
+			`
+			$("#viewer").find(".files").append(file);
+		}
+	}
+	
+	downloadFile();
+
+}
+
+const viewer2 = item => {
+	let handle = item.handle;
+	let files = item.files;
+	let path = window.location.pathname.substring(0, window.location.pathname.indexOf("/",2));
+	
+	console.log(JSON.stringify(handle));
+	
+	$("#handleView").find(".modal-body").empty();
+	let body = `
+	<div class="container">
+		<div class="row modalRow">
+			<div class="col-12 col-lg-6 modalCol">
+				<div class="row mb-3">
+					<label class="col-sm-2 col-form-label" for="handler2">제목</label>
+					<div class="col-sm-10">
+						<input type="text" class="form-control" id="handler2" readonly>
+					</div>
+				</div>
+				<div class="row mb-3">
+					<label class="col-sm-2 col-form-label" for="handle_contents2">내용</label>
+					<div class="col-sm-10">
+						<textarea class="form-control" id="handle_contents2" rows="11" readonly style="resize:none;"></textarea>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	`;
+	$("#handleView").find(".modal-body").append(body);
+	
+	$("#handler2").val(handle.handler);
+	$("#handle_contents2").val(handle.handle_contents);
+	
+	if(files === undefined || handle.file_idx === null) {
+		$("#handleView").find(".modalCol").removeClass('col-lg-6');
+	} else {
+		body = `
+			<div class="col-12 col-lg-6">
+				<div id="Carousel" class="carousel slide" data-bs-ride="carousel">
+					<div class="carousel-indicators">
+					</div>
+					<div class="carousel-inner">
+					</div>
+					<button class="carousel-control-prev" type="button"
+						data-bs-target="#Carousel" data-bs-slide="prev">
+						<span class="carousel-control-prev-icon" aria-hidden="true"></span>
+						<span class="visually-hidden">Previous</span>
+					</button>
+					<button class="carousel-control-next" type="button"
+						data-bs-target="#Carousel" data-bs-slide="next">
+						<span class="carousel-control-next-icon" aria-hidden="true"></span>
+						<span class="visually-hidden">Next</span>
+					</button>
+				</div>
+				<div class="files mb-3">
+				</div>
+			</div>
+		`;
+		$("#handleView").find(".modalRow").append(body);
 		
 		for(let data of files) {
 			let fileSrc = path+data.file_path+"/"+data.uuid+"_"+data.file_name;
@@ -491,11 +616,18 @@ const viewer = item => {
 					</div>				
 				</div>
 			`
-			$("#viewer").find(".files").append(file);
+			$("#handleView").find(".files").append(file);
 		}
 	}
 	
+	downloadFile();
 	
+}
+
+// file drag & drop 언젠가 이놈도 수정해서 common.js으로 넣기
+
+
+function downloadFile() {
 	// 파일 다운로드 기능,, 아 코드 언제 다수정하냐...
 	$(".downloadFile").on("click",function() {
 		  const a = document.createElement("a")
@@ -506,130 +638,5 @@ const viewer = item => {
 		  a.click();
 		  a.remove();
 	});
-}
+} 
 
-// file drag & drop 언젠가 이놈도 수정해서 common.js으로 넣기
-function dropFile(dropAreaId, fileListId) {
-	let dropArea = document.getElementById(dropAreaId);
-	let fileList = document.getElementById(fileListId);
-
-	function preventDefaults(e) {
-		e.preventDefault();
-		e.stopPropagation();
-	}
-
-	function highlight(e) {
-		preventDefaults(e);
-		dropArea.classList.add("highlight");
-	}
-
-	function unhighlight(e) {
-		preventDefaults(e);
-		dropArea.classList.remove("highlight");
-	}
-
-	function handleDrop(e) {
-		unhighlight(e);
-		let dt = e.dataTransfer;
-		let files = dt.files;
-		
-		handleFiles(files);
-
-		const fileList = document.getElementById(fileListId);
-		if (fileList) {
-			fileList.scrollTo({ top: fileList.scrollHeight });
-		}
-		
-		deleteFile();
-	}
-
-	function handleFiles(files) {
-		files = [...files];
-		files.forEach(previewFile);
-	}
-
-	function previewFile(file) {
-		fileList.appendChild(renderFile(file));
-		imageModal();
-	}
-	
-	function imageModal() {
-		$(".image").on("click",function() {
-			$("#modal-body-img").attr('src',$(this).attr('src'));		
-		})
-	}	
-	
-	function readerFile(file, callback) {
-	    let reader = new FileReader();
-	    
-	    reader.onload = function(e) {
-	        let src;
-	        if(file.type.split('/')[0] === 'image') {
-	            src = e.target.result;
-	        } else {
-	            src = "https://img.icons8.com/pastel-glyph/2x/image-file.png";
-	        }
-	        callback(src);
-	    };
-	    
-	    reader.readAsDataURL(file);
-	}
-	
-	function addUploadList(file) {
-		uploadList[fileidx] = file;
-		fileidx++;
-	}
-	
-	function deleteFile() {
-		$(".fileDelete").on("click",function() {
-			let idx = $(this).attr('id').split('_')[1];
-			delete uploadList[idx];
-			$(this).parent().remove();
-		})
-	}
-	
-
-	function renderFile(file) {
-		let fileDOM = document.createElement("div");
-		fileDOM.className = "file";
-		fileDOM.innerHTML = `
-			<div class="thumbnail" data-bs-toggle="modal" data-bs-target="#thumbnail">
-				<img src="" alt="파일타입 이미지" class="image pointer">
-			</div>
-			<div class="details">
-				<header class="header">
-					<span class="name">${file.name}</span>
-					<span class="size">${sizeFormat(file.size)}</span>
-				</header>
-				<div class="progress">
-					<div class="bar"></div>
-				</div>
-				<div class="status">
-					<span class="percent">100% done</span>
-					<span class="speed">90KB/sec</span>
-				</div>
-			</div>
-			<div class="fileDelete deleteHover" id="delete_${fileidx}">
-				<svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-x-lg pointer" viewBox="0 0 16 16">
-					<path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/>
-				</svg>
-			</div>
-	    `;
-		readerFile(file,function(src) {
-	        const image = fileDOM.querySelector('.image');
-	        image.src = src;
-		});
-	    
-	    addUploadList(file);
-		return fileDOM;
-	}
-
-	dropArea.addEventListener("dragenter", highlight, false);
-	dropArea.addEventListener("dragover", highlight, false);
-	dropArea.addEventListener("dragleave", unhighlight, false);
-	dropArea.addEventListener("drop", handleDrop, false);
-
-	return {
-		handleFiles
-	};
-}

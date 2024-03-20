@@ -8,31 +8,7 @@ let pageNum = 1;
 const reg = /\d{4}-\d{2}-\d{2}/g;
 
 $(function() {
-	// 시작일 datepicker 생성
-	$('#StartDate').datepicker({
-	    format: 'yyyy-mm-dd',
-	    autoclose: true,
-		todayHighlight: true,
-	    clearBtn: true,
-	    disableTouchKeyboard: true,
-	    language: 'ko'
-	}).on('changeDate',function(e) {
-		startDate = dateFormat(e.date);
-		$("#EndDate").datepicker('setStartDate', e.date);
-	});
-	
-	// 종료일 datepicker 생성
-	$('#EndDate').datepicker({
-	    format: 'yyyy-mm-dd',
-	    autoclose: true,
-	    todayHighlight: true,
-	    clearBtn: true,
-	    disableTouchKeyboard: true,
-	    language: 'ko'
-	}).on('changeDate',function(e) {
-		endDate = dateFormat(e.date);
-		$("#StartDate").datepicker('setEndDate', e.date);
-	});
+	dateRangePicker('StartDate','EndDate')
 	
 	// 그리드 생성
 	const grid = new tui.Grid({

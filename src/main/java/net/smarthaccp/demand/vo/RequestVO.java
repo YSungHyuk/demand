@@ -17,6 +17,7 @@ public class RequestVO {
 	private String state;
 	private String priority;
 	private String file_idx;
+	private String handle_idx;
 	private String create_date;
 	private String update_date;
 }

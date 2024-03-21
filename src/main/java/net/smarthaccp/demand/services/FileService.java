@@ -61,7 +61,7 @@ public class FileService {
     		
     		int seq = 1;
     		
-    		if(file_idx == null || file_idx.equals("0")) {
+    		if(file_idx == null || file_idx.equals("") || file_idx.equals("0")) {
     			file_idx = keyService.selectKey("FILE");
     		} else {
     			seq = fileMapper.selectMaxSeq(file_idx);

@@ -23,7 +23,8 @@ import net.smarthaccp.demand.services.FileService;
 import net.smarthaccp.demand.services.HandlerService;
 import net.smarthaccp.demand.services.KeyService;
 import net.smarthaccp.demand.vo.FileVO;
-import net.smarthaccp.demand.vo.HandlerVO;
+import net.smarthaccp.demand.vo.HandleVO;
+import net.smarthaccp.demand.vo.RequestVO;
 
 @Controller
 @RequestMapping(value="/api/handler")
@@ -44,7 +45,7 @@ public class HandlerController {
 	@ResponseBody
 	@RequestMapping(value="insert", method = RequestMethod.POST, consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE}, produces = "application/json; charset=UTF-8")
 	public ResponseEntity<Void> createHandle(
-			@RequestPart(value="handle", required=false) HandlerVO handle
+			@RequestPart(value="handle", required=false) HandleVO handle
 			, HttpSession session
 			, @RequestPart(value="files", required=false) List<MultipartFile> files) {
 		
@@ -67,29 +68,33 @@ public class HandlerController {
 	public ResponseEntity selectHandle(
 			@PathVariable(name="handle_idx") String handle_idx) {
 		
-		Map<String, Object> result = new HashMap<String,Object>();
-		
-		HandlerVO handle = handlerService.selectHandle(handle_idx);
+		HandleVO handle = handlerService.selectHandle(handle_idx);
 		
 		if(handle != null) {
-			result.put("handle",handle);
-			
 			if(handle.getFile_idx() != null && !handle.getFile_idx().trim().isEmpty()) {
-				List<FileVO> files = fileService.getFileList(handle.getFile_idx());
-				result.put("files", files);
+				handle.setFiles(fileService.getFileList(handle.getFile_idx()));
 			}
 		}
 		
-		return ResponseEntity.ok(result);
+		return ResponseEntity.ok(handle);
 	}
 	
 	
 	@ResponseBody
-	@RequestMapping(value="update", method = RequestMethod.PUT)
+	@RequestMapping(value="update", method = RequestMethod.PUT, consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE}, produces = "application/json; charset=UTF-8")
 	public ResponseEntity<Void> updateHandle(
-			@PathVariable(name="handle_idx") String handle_idx) {
+			@RequestPart(value="handle", required=false) HandleVO handle
+			, HttpSession session
+			, @RequestPart(value="files", required=false) List<MultipartFile> files
+			, @RequestPart(value="deleteList", required=false) List<Integer> deleteList) {
 		
-//		handlerService.updateSite(handle_idx);
+		if(deleteList != null && deleteList.size() > 0) {
+			handle.setFile_idx(fileService.FileUpdate(files, deleteList, session, handle.getFile_idx()));
+		} else {
+			handle.setFile_idx(fileService.FileUpload(files, session, handle.getFile_idx()));
+		}
+		
+		handlerService.updateHandle(handle);
 		
 		return ResponseEntity.ok().build();
 	}

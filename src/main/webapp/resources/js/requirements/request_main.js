@@ -7,6 +7,7 @@ let endDate;
 let pageNum = 1;
 const reg = /\d{4}-\d{2}-\d{2}/g;
 let uploadList = [];
+let deleteList = [];
 let fileidx = 0;
 
 $(function() {
@@ -44,7 +45,7 @@ $(function() {
 				, align: 'center'
 				, formatter: function(item) {
 					let viewer = `
-					<div class="viewer" data-bs-toggle="modal" data-bs-target="#viewer" value=${item.row.req_idx}>
+					<div class="requestView" data-bs-toggle="modal" data-bs-target="#requestView" value=${item.row.req_idx}>
 						${item.value}
 					</div>
 					`;
@@ -234,19 +235,28 @@ $(function() {
 	
 	// 처리 버튼 클릭
 	$("#handleInsertBtn").on("click",function() {
-		$("#viewer").modal("hide");
-		$("#handleInsert").find("input[name=req_idx]").val($(this).val());
+		$("#requestView").modal("hide");
+		
+		$("#handleForm").find("input[name=req_idx]").val($(this).val());
+		$("#updateSubmit").addClass("d-none");
+		$("#insertSubmit").removeClass("d-none");
+		$("#resetBtn").removeClass("d-none");
 	})
 	
 	// 처리내용 버튼 클릭
 	$("#handleViewBtn").on("click",function() {
-		$("#viewer").modal("hide");
+		$("#requestView").modal("hide");
+		
+		$("#insertSubmit").addClass("d-none");
+		$("#resetBtn").addClass("d-none");
+		$("#updateSubmit").removeClass("d-none");
+		
 		let idx = $(this).val();
 		
 		fetch(`/api/handler/select/${idx}`)
 		.then(response => response.json())
 		.then(result => {
-			viewer2(result);
+			handleView(result);
 		})
 		.catch(error => console.error(error));
 	})
@@ -256,7 +266,7 @@ $(function() {
 		let formData = new FormData();
 		let handle = {}
 		
-		for (const pair of new FormData($("#insertform")[0]).entries()) {
+		for (const pair of new FormData($("#form")[0]).entries()) {
 			if(pair[0] != 'file') handle[pair[0]] = pair[1];
 		}
 		
@@ -279,8 +289,41 @@ $(function() {
 		.catch(error => console.error(error));
 	});
 	
+	$("#handleUpdateBtn").on("click",function() {
+		$("#handleView").modal("hide");
+		$("#updateSubmit").removeClass("d-none");
+		$("#insertSubmit").addClass("d-none");
+		$("#resetBtn").addClass("d-none");
+	})
 	
-	
+    // 수정
+	$("#updateSubmit").on("click",function() {
+		let formData = new FormData();
+		let handle = {}
+		
+		for (const pair of new FormData($("#form")[0]).entries()) {
+			if(pair[0] != 'file') handle[pair[0]] = pair[1];
+		}
+		
+		for (let i=0; i < uploadList.length; i++) {
+			if(uploadList[i] !== undefined) formData.append("files",uploadList[i]);  
+		}
+		
+		formData.append("deleteList", new Blob([JSON.stringify(deleteList)],{type: "application/json"}));
+		formData.append("handle", new Blob([JSON.stringify(handle)],{type: "application/json"}));
+		
+		fetch('/api/handler/update', {
+			method: 'PUT',
+			headers: {},
+			body: formData
+		})
+		.then(response => {
+			if(response.status === 200) {
+				location.reload(true);
+			}
+		})
+		.catch(error => console.error(error));
+	});
 	
 	
 	getGrid();
@@ -323,28 +366,32 @@ const itemSelect = idx => {
 	fetch(`/api/requirements/select/${idx}`)
 	.then(response => response.json())
 	.then(result => {
-		viewer(result);
+		requestView(result);
 	})
 	.catch(error => console.error(error));
 };
 
 const handleReset = () => {
 	uploadList = [];
+	deleteList = [];
 	fileidx = 0;
 	$("#handler").val('');
 	$("#handle_contents").val('');
-	$(".files").each(function() {
-		$(this).empty();
-	})  
+	$("#handleForm").find('input[type=hidden]').each(function() {
+		$(this).val('');
+	})
+	$("#handle_idx").val('');
+	$("#file_idx").val('');
+	$("#handleForm").find(".files").empty();
 };
 
 // 이놈도 줄여서...
-const viewer = item => {
+const requestView = item => {
 	let request = item.request;
 	let files = item.files;
 	let path = window.location.pathname.substring(0, window.location.pathname.indexOf("/",2));
 	
-	$("#viewer").find(".modal-body").empty();
+	$("#requestView").find(".modal-body").empty();
 	let body = `
 	<div class="container">
 		<div class="row modalRow">
@@ -424,7 +471,7 @@ const viewer = item => {
 		</div>
 	</div>
 	`;
-	$("#viewer").find(".modal-body").append(body);
+	$("#requestView").find(".modal-body").append(body);
 	
 	$("input[name=priority]").each(function() {
 		if($(this).val() == request.priority) $(this).attr('checked','checked');
@@ -451,7 +498,7 @@ const viewer = item => {
 	}
 	
 	if(files === undefined || request.file_idx === null) {
-		$("#viewer").find(".modalCol").removeClass('col-lg-6');
+		$("#requestView").find(".modalCol").removeClass('col-lg-6');
 	} else {
 		body = `
 			<div class="col-12 col-lg-6">
@@ -475,7 +522,7 @@ const viewer = item => {
 				</div>
 			</div>
 		`;
-		$("#viewer").find(".modalRow").append(body);
+		$("#requestView").find(".modalRow").append(body);
 		
 		let isActive = true;
 		for(let data of files) {
@@ -514,7 +561,7 @@ const viewer = item => {
 					</div>				
 				</div>
 			`
-			$("#viewer").find(".files").append(file);
+			$("#requestView").find(".files").append(file);
 		}
 	}
 	
@@ -522,12 +569,9 @@ const viewer = item => {
 
 }
 
-const viewer2 = item => {
-	let handle = item.handle;
-	let files = item.files;
+const handleView = handle => {
+	let files = handle.files;
 	let path = window.location.pathname.substring(0, window.location.pathname.indexOf("/",2));
-	
-	console.log(JSON.stringify(handle));
 	
 	$("#handleView").find(".modal-body").empty();
 	let body = `
@@ -535,15 +579,15 @@ const viewer2 = item => {
 		<div class="row modalRow">
 			<div class="col-12 col-lg-6 modalCol">
 				<div class="row mb-3">
-					<label class="col-sm-2 col-form-label" for="handler2">제목</label>
+					<label class="col-sm-2 col-form-label" for="viewHandler">제목</label>
 					<div class="col-sm-10">
-						<input type="text" class="form-control" id="handler2" readonly>
+						<input type="text" class="form-control" id="viewHandler" readonly>
 					</div>
 				</div>
 				<div class="row mb-3">
-					<label class="col-sm-2 col-form-label" for="handle_contents2">내용</label>
+					<label class="col-sm-2 col-form-label" for="viewHandleContents">내용</label>
 					<div class="col-sm-10">
-						<textarea class="form-control" id="handle_contents2" rows="11" readonly style="resize:none;"></textarea>
+						<textarea class="form-control" id="viewHandleContents" rows="11" readonly style="resize:none;"></textarea>
 					</div>
 				</div>
 			</div>
@@ -552,12 +596,16 @@ const viewer2 = item => {
 	`;
 	$("#handleView").find(".modal-body").append(body);
 	
-	$("#handler2").val(handle.handler);
-	$("#handle_contents2").val(handle.handle_contents);
+	$("#viewHandler").val(handle.handler);
+	$("#viewHandleContents").val(handle.handle_contents);
+	$("#handler").val(handle.handler);
+	$("#handle_contents").val(handle.handle_contents);
+	$("#handleForm").find('input[name=handle_idx]').val(handle.handle_idx);
 	
 	if(files === undefined || handle.file_idx === null) {
 		$("#handleView").find(".modalCol").removeClass('col-lg-6');
 	} else {
+		$("#handleForm").find('input[name=file_idx]').val(handle.file_idx);
 		body = `
 			<div class="col-12 col-lg-6">
 				<div id="Carousel" class="carousel slide" data-bs-ride="carousel">
@@ -582,6 +630,7 @@ const viewer2 = item => {
 		`;
 		$("#handleView").find(".modalRow").append(body);
 		
+		let isActive = true;
 		for(let data of files) {
 			let fileSrc = path+data.file_path+"/"+data.uuid+"_"+data.file_name;
 			let noImageSrc = "https://img.icons8.com/pastel-glyph/2x/image-file.png";
@@ -593,12 +642,14 @@ const viewer2 = item => {
 				$(".carousel-indicators").append(indicators);
 				
 				let inner = `
-				    <div class="carousel-item ${data.seq === 1 ? 'active' : ''}">
+				    <div class="carousel-item ${isActive ? 'active' : ''}">
 			        	<img src="${fileSrc}" class="d-block modal-carousel" alt="첨부이미지${data.seq}">
 				    </div>
 				`;
 				$(".carousel-inner").append(inner);
 			}
+			
+			isActive = false;
 			
 			let file = `
 				<div class="file">
@@ -615,28 +666,56 @@ const viewer2 = item => {
 						</header>
 					</div>				
 				</div>
-			`
+			`;
 			$("#handleView").find(".files").append(file);
+			
+			file = `
+				<div class="file">
+					<div class="thumbnail">
+						<img src="${data.file_type === 'image' ? fileSrc : noImageSrc}" alt="${data.file_name}" class="image">
+					</div>
+					<div class="details">
+						<header class="header">
+							<span class="name downloadFile pointer">
+								<input type="hidden" value="${fileSrc}" id="${data.file_name }">
+								${data.file_name}
+							</span>
+							<span class="size">${sizeFormat(data.file_size)}</span>
+						</header>
+					</div>	
+					<div class="oldFileDelete deleteHover">
+						<input type="hidden" value="${data.seq}">
+						<svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-x-lg pointer" viewBox="0 0 16 16">
+							<path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/>
+						</svg>
+					</div>			
+				</div>
+			`;
+			
+			$("#handleForm").find(".files").append(file);
 		}
 	}
-	
 	downloadFile();
-	
+	fileDelete();
 }
 
-// file drag & drop 언젠가 이놈도 수정해서 common.js으로 넣기
-
-
-function downloadFile() {
-	// 파일 다운로드 기능,, 아 코드 언제 다수정하냐...
+const downloadFile = () => {
 	$(".downloadFile").on("click",function() {
-		  const a = document.createElement("a")
-		  const name = $(this).children('input[type=hidden]').attr('id');
-		  const source = $(this).children('input[type=hidden').val();
-		  a.href = source;
-		  a.setAttribute('download',name);
-		  a.click();
-		  a.remove();
+		const a = document.createElement("a")
+		const name = $(this).children('input[type=hidden]').attr('id');
+		const source = $(this).children('input[type=hidden').val();
+		a.href = source;
+		a.setAttribute('download',name);
+		a.click();
+		a.remove();
 	});
-} 
+};
+
+const fileDelete = () => {
+	$(".oldFileDelete").on("click",function() {
+		deleteList.push($(this).children('input[type=hidden]').val());
+		$(this).parent().remove();
+	});
+}
+
 

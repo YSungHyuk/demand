@@ -1,5 +1,7 @@
 package net.smarthaccp.demand.vo;
 
+import java.util.List;
+
 import lombok.Data;
 
 @Data
@@ -20,4 +22,5 @@ public class RequestVO {
 	private String handle_idx;
 	private String create_date;
 	private String update_date;
+	private List<FileVO> files;
 }

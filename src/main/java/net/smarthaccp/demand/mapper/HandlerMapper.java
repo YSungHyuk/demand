@@ -2,14 +2,16 @@ package net.smarthaccp.demand.mapper;
 
 import org.apache.ibatis.annotations.Mapper;
 
-import net.smarthaccp.demand.vo.HandlerVO;
+import net.smarthaccp.demand.vo.HandleVO;
 
 
 @Mapper
 public interface HandlerMapper {
 
-	HandlerVO selectHandle(String handle_idx);
+	HandleVO selectHandle(String handle_idx);
 
-	void insertHandle(HandlerVO handle);
+	void insertHandle(HandleVO handle);
+
+	void updateHandle(HandleVO handle);
 
 }

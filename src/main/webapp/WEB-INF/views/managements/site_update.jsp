@@ -66,6 +66,34 @@
 							<input type="text" autocomplete="off" class="form-control" name="site_port" id="site_port" required value="${site.site_port }">
 						</div>
 					</div>
+					<div class="row mb-3">
+						<label class="col-sm-2 col-form-label" for="db_type">DB종류</label>
+						<div class="col-sm-6">
+							<select class="form-select" aria-label="Default select example" name="db_type" id="db_type">
+								<option value="MariaDB" <c:if test="${site.db_type eq 'MariaDB' }">selected</c:if>>MariaDB</option>
+								<option value="MySQL" <c:if test="${site.db_type eq 'MySQL' }">selected</c:if>>MySQL</option>
+								<option value="ORACLE" <c:if test="${site.db_type eq 'ORACLE' }">selected</c:if>>ORACLE</option>
+							</select>
+						</div>
+						<div class="col-sm-4">
+							<input type="text" autocomplete="off" class="form-control" name="db_port" id="db_port" placeholder="접속포트" value="${site.db_port }">
+						</div>
+					</div>
+					<div class="row mb-3">
+						<label class="col-sm-2 col-form-label" for="db_name">DB명</label>
+						<div class="col-sm-10">
+							<input type="text" autocomplete="off" class="form-control" name="db_name" id="db_name" value="${site.db_name }">
+						</div>
+					</div>
+					<div class="row mb-3">
+						<div class="col-sm-2 col-form-label">계정정보</div>
+						<div class="col-sm-5">
+							<input type="text" autocomplete="off" class="form-control" name="db_id" id="db_id" placeholder="아이디" value="${site.db_id }">
+						</div>
+						<div class="col-sm-5">
+							<input type="password" autocomplete="off" class="form-control" name="db_pw" id="db_pw" placeholder="비밀번호" value="${site.db_pw }">
+						</div>
+					</div>
 				</div>
 				<div class="col-12 col-lg-6">
 					<div class="upload-box mt-5">

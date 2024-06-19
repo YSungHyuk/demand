@@ -34,11 +34,16 @@
 	</insert>
 	<insert id="insertSiteDetail" parameterType="SiteVO">
 		INSERT INTO
-			SITE_DETAIL_TB(site_idx,site_url,site_port)
+			SITE_DETAIL_TB(site_idx,site_url,site_port,db_type,db_port,db_name,db_id,db_pw)
 			values(
 				#{site_idx}
 				, #{site_url}
 				, #{site_port}
+				, #{db_type}
+				, #{db_port}
+				, #{db_name}
+				, #{db_id}
+				, #{db_pw}
 			)
 	</insert>
 	<select id="getSiteList" parameterType="SearchInfoVO" resultType="SiteVO">
@@ -124,6 +129,11 @@
 			, file_idx
 			, site_url
 			, site_port
+			, db_type
+			, db_port
+			, db_name
+			, db_id
+			, db_pw
 			, DATE(business_start_date) as 'business_start_date'
 			, DATE(business_end_date) as 'business_end_date'
 			, SM.state
@@ -175,6 +185,21 @@
 			</if>	    
 			<if test="site_port != null and site_port !=''">
 				site_port = #{site_port},	
+			</if>    
+			<if test="db_type != null and db_type !=''">
+				db_type = #{db_type},	
+			</if>    
+			<if test="db_port != null and db_port !=''">
+				db_port = #{db_port},	
+			</if>    
+			<if test="db_name != null and db_name !=''">
+				db_name = #{db_name},	
+			</if>    
+			<if test="db_id != null and db_id !=''">
+				db_id = #{db_id},	
+			</if>    
+			<if test="db_pw != null and db_pw !=''">
+				db_pw = #{db_pw},	
 			</if>    
 	    </set>
 	    WHERE

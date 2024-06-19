@@ -20,4 +20,10 @@ public class SiteVO {
 	// Detail
 	private String site_url;
 	private String site_port;
+	private String db_type;
+	private String db_port;
+	private String db_name;
+	private String db_id;
+	private String db_pw;
+	
 }

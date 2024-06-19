@@ -39,6 +39,8 @@ function initfunc() {
 		
 		formData.append("site", new Blob([JSON.stringify(site)],{type: "application/json"}));
 		
+		console.log("formData : ", JSON.stringify(formData));
+		
 		fetch('/api/managements/insert', {
 			method: 'POST',
 			headers: {},

@@ -65,6 +65,34 @@
 							<input type="text" autocomplete="off" class="form-control" name="site_port" id="site_port" required>
 						</div>
 					</div>
+					<div class="row mb-3">
+						<label class="col-sm-2 col-form-label" for="db_type">DB종류</label>
+						<div class="col-sm-6">
+							<select class="form-select" aria-label="Default select example" name="db_type" id="db_type">
+								<option value="MARIA" selected>MariaDB</option>
+								<option value="MYSQL">MySQL</option>
+								<option value="ORACLE">ORACLE</option>
+							</select>
+						</div>
+						<div class="col-sm-4">
+							<input type="text" autocomplete="off" class="form-control" name="db_port" id="db_port" placeholder="접속포트">
+						</div>
+					</div>
+					<div class="row mb-3">
+						<label class="col-sm-2 col-form-label" for="db_name">DB명</label>
+						<div class="col-sm-10">
+							<input type="text" autocomplete="off" class="form-control" name="db_name" id="db_name">
+						</div>
+					</div>
+					<div class="row mb-3">
+						<div class="col-sm-2 col-form-label">계정정보</div>
+						<div class="col-sm-5">
+							<input type="text" autocomplete="off" class="form-control" name="db_id" id="db_id" placeholder="아이디">
+						</div>
+						<div class="col-sm-5">
+							<input type="password" autocomplete="off" class="form-control" name="db_pw" id="db_pw" placeholder="비밀번호">
+						</div>
+					</div>
 				</div>
 				<div class="col-12 col-lg-6">
 					<div class="upload-box mt-5">

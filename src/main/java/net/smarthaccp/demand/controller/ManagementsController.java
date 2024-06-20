@@ -165,5 +165,4 @@ public class ManagementsController {
 		
 		return ResponseEntity.ok().build();
 	}
-	
 }

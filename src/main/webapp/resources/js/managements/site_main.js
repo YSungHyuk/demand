@@ -108,6 +108,10 @@ $(function() {
 			for(let row of e.instance.store.viewport.rows) {
 				if(row.rowKey === rowKey) pageLink(row.valueMap.site_url.value);
 			}			
+		} else if(e.columnName === 'site_name') {
+			for(let row of e.instance.store.viewport.rows) {
+				if(row.rowKey === rowKey) dummy(row.valueMap.site_idx.value);
+			}
 		}
 		
 	});
@@ -200,7 +204,7 @@ $(function() {
 	// 아이템 등록
 	$("#inser_item").on("click",function() {
 		let _width = '1200';
-		let _height = '590';
+		let _height = '630';
 	    let _left = Math.ceil((window.screen.width - _width )/2);
 	    let _top = Math.ceil((window.screen.height - _height )/2); 
 	
@@ -219,7 +223,7 @@ $(function() {
 const itemUpdate = idx => {
 	
 	let _width = '1200';
-	let _height = '590';
+	let _height = '630';
     let _left = Math.ceil((window.screen.width - _width )/2);
     let _top = Math.ceil((window.screen.height - _height )/2); 
 
@@ -248,7 +252,22 @@ const itemDelete = idx => {
 	}
 }
 
-// 아이템 삭제
+//더미데이터 생성
+const dummy = idx => {
+	
+	let _width = '600';
+	let _height = '550';
+    let _left = Math.ceil((window.screen.width - _width )/2);
+    let _top = Math.ceil((window.screen.height - _height )/2); 
+
+	let url = `/api/dummy/${idx}`;
+	let target = 'Create Dummy';
+	let option = 'location=no, directories=no,resizable=yes,status=no,toolbar=no,menubar=no, width='+_width+',height='+_height+',left='+_left+',top='+_top+',scrollbars=yes';
+	
+	window.open(url,target,option);
+}
+
+// 페이지 이동
 const pageLink = url => {
 	const link = document.createElement('a');
 	link.href = url

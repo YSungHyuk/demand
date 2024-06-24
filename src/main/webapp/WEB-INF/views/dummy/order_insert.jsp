@@ -10,7 +10,13 @@
 		<jsp:include page="../inc/header.jsp" />
 	</header>
 	<script src="${pageContext.request.contextPath }/resources/js/dummy/order_insert.js"></script>
-	<form id="form">
+<!-- 	<form id="form"> -->
+	<script type="text/javascript">
+		let siteUrl = "${site.site_url}";
+		let port = "${site.site_port}";
+	</script>
+	<form>
+		${site }
 		<div class="container mt-3">
 			<div class="row">
 				<div class="col-12">
@@ -39,44 +45,34 @@
 						</div>
 					</div>
 					<div class="row mb-3">
-						<label class="col-sm-2 col-form-label" for="company">품목명</label>
+						<label class="col-sm-2 col-form-label" for="itemNm">품목명</label>
 						<div class="col-sm-10" data-bs-toggle="modal" data-bs-target="#itemSearch">
-							<input type="hidden" name="site_idx" id="site_idx" required>
-							<input type="text" autocomplete="off" class="form-control" name="company" id="company" required readonly>
+							<input type="hidden" name="itemCd" id="itemCd" required>
+							<input type="text" autocomplete="off" class="form-control" name="itemNm" id="itemNm" required readonly>
 						</div>
 					</div>
 					<div class="row mb-3">
-						<label class="col-sm-2 col-form-label" for="site_port">접속포트</label>
+						<label class="col-sm-2 col-form-label" for="prodQty">생산수량</label>
 						<div class="col-sm-10">
-							<input type="text" autocomplete="off" class="form-control" name="site_port" id="site_port" required>
+							<input type="number" autocomplete="off" class="form-control" name="prodQty" id="prodQty" required>
 						</div>
 					</div>
 					<div class="row mb-3">
-						<label class="col-sm-2 col-form-label" for="db_type">DB종류</label>
+						<label class="col-sm-2 col-form-label" for="goodQty">양품수량</label>
 						<div class="col-sm-6">
-							<select class="form-select" aria-label="Default select example" name="db_type" id="db_type">
-								<option value="MARIA" selected>MariaDB</option>
-								<option value="MYSQL">MySQL</option>
-								<option value="ORACLE">ORACLE</option>
-							</select>
+							<input type="number" autocomplete="off" class="form-control" name="goodQty" id="goodQty" required>
 						</div>
 						<div class="col-sm-4">
-							<input type="text" autocomplete="off" class="form-control" name="db_port" id="db_port" placeholder="접속포트">
+							<input type="number" autocomplete="off" class="form-control" name="goodQtyRange" id="goodQtyRange" placeholder="범위(±)">
 						</div>
 					</div>
 					<div class="row mb-3">
-						<label class="col-sm-2 col-form-label" for="db_name">DB명</label>
-						<div class="col-sm-10">
-							<input type="text" autocomplete="off" class="form-control" name="db_name" id="db_name">
+						<label class="col-sm-2 col-form-label" for="badQty">불량수량</label>
+						<div class="col-sm-6">
+							<input type="number" autocomplete="off" class="form-control" name="badQty" id="badQty" required>
 						</div>
-					</div>
-					<div class="row mb-3">
-						<div class="col-sm-2 col-form-label">계정정보</div>
-						<div class="col-sm-5">
-							<input type="text" autocomplete="off" class="form-control" name="db_id" id="db_id" placeholder="아이디">
-						</div>
-						<div class="col-sm-5">
-							<input type="password" autocomplete="off" class="form-control" name="db_pw" id="db_pw" placeholder="비밀번호">
+						<div class="col-sm-4">
+							<input type="number" autocomplete="off" class="form-control" name="badQtyRange" id="badQtyRange" placeholder="범위(±)">
 						</div>
 					</div>
 				</div>

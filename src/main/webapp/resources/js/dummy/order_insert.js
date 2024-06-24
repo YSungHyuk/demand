@@ -12,6 +12,18 @@ $(function() {
 
 // 조회 버튼
 function initfunc() {
+
+	// 검색
+	$("#selectGrid").on("click",getGrid);
+	
+	// 검색 엔터기능
+    $("#searchBox").on("keydown", function(e){
+        if(e.keyCode === 13) {
+        	getGrid();
+        }
+    });
+	
+	
     // 초기화
 	$("#resetBtn").on("click",function() {
 		location.reload(true);
@@ -100,4 +112,24 @@ function initView(gridAreaId,gridId) {
 		} 
 	});
 }
+
+// 그리드 조회
+function getGrid() {
+	let keyword = $("#searchBox").val();
+	let protocol = port==80?"http://":"https://";
+	let url = `${protocol}${siteUrl}/api/v1/item?company=1000&itemType=&itemNm=${keyword}&useYn=Y`;
+	console.log(url);
+	
+	fetch(url, {
+		method: 'GET',
+		headers: { 'Content-Type': 'application/json; charset=UTF-8' }
+	})
+	.then(response => response.json())
+	.then(itemList => {
+		console.log(itemList);
+		grid.resetData(itemList);
+		grid.refreshLayout();
+	})
+	.catch(error => console.error(error));
+};
 

@@ -37,28 +37,24 @@ function initfunc() {
     // 등록
 	$("#submitBtn").on("click",function() {
 		let formData = new FormData();
-		let site = {}
+		let workOrder = {}
 		
 		for (const pair of new FormData($("#form")[0]).entries()) {
-			if(pair[0] != 'file') site[pair[0]] = pair[1];
+			console.log(pair[0]," : ",pair[1]);
+			if(pair[0] != 'file') workOrder[pair[0]] = pair[1];
 		}
 		
-		for (let i=0; i < uploadList.length; i++) {
-			if(uploadList[i] !== undefined) formData.append("files",uploadList[i]);  
-		}
+		formData.append("workOrder", new Blob([JSON.stringify(workOrder)],{type: "application/json"}));
 		
-		formData.append("site", new Blob([JSON.stringify(site)],{type: "application/json"}));
-		
-		console.log("formData : ", JSON.stringify(formData));
-		
-		fetch('/api/managements/insert', {
+		fetch('/api/dummy/orderInsert', {
 			method: 'POST',
+			contentType : "application/json",
 			headers: {},
 			body: formData
 		})
 		.then(response => {
 			if(response.status === 200) {
-				location.href='/close';
+//				location.href='/close';
 			}
 		})
 		.catch(error => console.error(error));
@@ -76,12 +72,12 @@ function initView(gridAreaId,gridId) {
 		, bodyHeight: 250
 		, columns: [
 			{
-				header: '관리번호'
+				header: '품목코드'
 				, name: 'itemCd'
 				, align: 'center'
 			},
 			{
-				header: '회사명'
+				header: '품목명'
 				, name: 'itemNm'
 				, align: 'center'
 			},
@@ -116,17 +112,17 @@ function initView(gridAreaId,gridId) {
 // 그리드 조회
 function getGrid() {
 	let keyword = $("#searchBox").val();
-	let protocol = port==80?"http://":"https://";
-	let url = `${protocol}${siteUrl}/api/v1/item?company=1000&itemType=&itemNm=${keyword}&useYn=Y`;
-	console.log(url);
 	
-	fetch(url, {
-		method: 'GET',
-		headers: { 'Content-Type': 'application/json; charset=UTF-8' }
+	fetch('/api/dummy/extGetItemList', {
+		method: 'POST',
+		headers: { 'Content-Type': 'application/json; charset=UTF-8' },
+		body: JSON.stringify({
+			searchKeyword:keyword
+			, idx:idx
+		})
 	})
 	.then(response => response.json())
 	.then(itemList => {
-		console.log(itemList);
 		grid.resetData(itemList);
 		grid.refreshLayout();
 	})

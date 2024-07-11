@@ -14,6 +14,9 @@ public class SearchInfoVO {
 	private String searchType;
 	private String searchKeyword;
 	
+	// 고유번호
+	private String idx;
+	
 	public void deleteStartRow() {
 		this.startRow = null;
 	}

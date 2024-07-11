@@ -10,35 +10,35 @@
 		<jsp:include page="../inc/header.jsp" />
 	</header>
 	<script src="${pageContext.request.contextPath }/resources/js/dummy/order_insert.js"></script>
-<!-- 	<form id="form"> -->
 	<script type="text/javascript">
-		let siteUrl = "${site.site_url}";
-		let port = "${site.site_port}";
+		let idx = "${site.site_idx}";
 	</script>
-	<form>
-		${site }
+	<form id="form">
+		<input type="hidden" name="idx" value="${site.site_idx }">
 		<div class="container mt-3">
 			<div class="row">
 				<div class="col-12">
 					<div class="row mb-3">
 						<label class="col-sm-2 col-form-label" for="dummy_start_date">시작일</label>
-						<div class="col-sm-6">
+						<div class="col-sm-4">
 							<input type="text" autocomplete="off" class="form-control" name="dummy_start_date" id="dummy_start_date" required readonly>
 						</div>
+						<label class="col-sm-2 col-form-label" for="dummy_end_date">종료일</label>
 						<div class="col-sm-4">
-							<select class="form-select" name="" id="">
+							<input type="text" autocomplete="off" class="form-control" name="dummy_end_date" id="dummy_end_date" required readonly>
+						</div>
+					</div>
+					<div class="row mb-3">
+						<label class="col-sm-2 col-form-label" for="dummy_work_startTime">작업시작시간</label>
+						<div class="col-sm-4">
+							<select class="form-select" name="dummy_work_startTime" id="dummy_work_startTime">
 								<option value="1" selected>01:00</option>
 								<option value="2">02:00</option>
 							</select>
 						</div>
-					</div>
-					<div class="row mb-3">
-						<label class="col-sm-2 col-form-label" for="dummy_end_date">종료일</label>
-						<div class="col-sm-6">
-							<input type="text" autocomplete="off" class="form-control" name="dummy_end_date" id="dummy_end_date" required readonly>
-						</div>
+						<label class="col-sm-2 col-form-label" for="dummy_work_endTime">작업종료시간</label>
 						<div class="col-sm-4">
-							<select class="form-select" name="" id="">
+							<select class="form-select" name="dummy_work_endTime" id="dummy_work_endTime">
 								<option value="1" selected>01:00</option>
 								<option value="2">02:00</option>
 							</select>
